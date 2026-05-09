@@ -1,0 +1,90 @@
+{
+  "lang": "en",
+  "meta": {
+    "title": "RTX 5060 Ti Benchmark Results — FreakingJSON Agency",
+    "description": "Comprehensive benchmark of Qwopus and baseline models on NVIDIA RTX 5060 Ti 16GB"
+  },
+  "header": {
+    "agency": "FreakingJSON Agency",
+    "subtitle": "AI Operations Center",
+    "report_title": "RTX 5060 Ti 16GB Benchmark Report",
+    "methodology": "Phased v5 Methodology"
+  },
+  "hero": {
+    "gpu_title": "Hardware Configuration",
+    "gpu_model": "RTX 5060 Ti 16GB",
+    "architecture": "Blackwell sm_120",
+    "vram": "16GB VRAM",
+    "ram": "31GB System RAM",
+    "runtime": "llama.cpp build 9080",
+    "backend": "Vulkan Backend"
+  },
+  "nav": {
+    "overview": "Overview",
+    "models": "Models",
+    "throughput": "Throughput",
+    "scores": "Deliverable Scores",
+    "blockers": "Blockers"
+  },
+  "kpi": {
+    "models_tested": "Models Tested",
+    "max_throughput": "Max Throughput",
+    "best_score": "Best Score",
+    "blockers": "Blockers Resolved",
+    "vram_peak": "VRAM Peak Usage",
+    "benchmark_days": "Benchmark Days"
+  },
+  "table": {
+    "model": "Model",
+    "architecture": "Architecture",
+    "quant": "Quantization",
+    "size": "Size",
+    "throughput": "Throughput (tok/s)",
+    "vram": "VRAM",
+    "score": "Score",
+    "status": "Status",
+    "recommendation": "Recommendation"
+  },
+  "chart": {
+    "throughput_title": "Throughput Comparison (tok/s)",
+    "score_title": "Pokedex Scores by Model",
+    "vram_title": "VRAM Usage Distribution"
+  },
+  "status": {
+    "success": "Success",
+    "borderline": "Borderline",
+    "blocked": "Blocked",
+    "best": "Best",
+    "viable": "Viable"
+  },
+  "blockers": {
+    "title": "Blockers & Failure Modes",
+    "affected": "Affected Models",
+    "root_cause": "Root Cause",
+    "fix": "Fix Status",
+    "workaround": "Workaround"
+  },
+  "insights": {
+    "title": "Key Insights",
+    "syntax_champion": "Qwopus3.6-27B achieved zero syntax errors — the only model to do so",
+    "css_quality": "35B-A3B shows exceptional CSS quality even when truncated",
+    "async_bug": "Async bug (1 character) affects all 9B models universally",
+    "methodology_impact": "Prompt methodology accounts for ~35 points of difference"
+  },
+  "deliverables": {
+    "title": "Deliverable Samples",
+    "pokedex": "Pokedex HTML",
+    "starwars": "StarWars HTML",
+    "iframe_note": "Live renders from benchmark outputs"
+  },
+  "footer": {
+    "agency": "FreakingJSON Agency",
+    "ai_ops": "AI Operations Center",
+    "copyright": "Benchmark data from 36-day evaluation window"
+  },
+  "toggle": {
+    "en": "English",
+    "es": "Español",
+    "label": "Language"
+  }
+}

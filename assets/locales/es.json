@@ -1,0 +1,23 @@
+{
+  "title": "Resultados Benchmark RTX 5060 Ti",
+  "subtitle": "FreakingJSON Agencia \u2022 Centro de Operaciones AI",
+  "hero_hardware": "Hardware",
+  "hero_gpu": "GPU",
+  "hero_vram": "VRAM",
+  "hero_ram": "RAM Sistema",
+  "section_models": "Modelos Probados",
+  "section_scores": "Puntuaciones Pokedex / StarWars",
+  "section_blockers": "Bloqueos Conocidos",
+  "section_deliverables": "Ejemplos de Deliverables",
+  "table_model": "Modelo",
+  "table_arch": "Arquitectura",
+  "table_quant": "Cuantizaci\u00f3n",
+  "table_size": "Tama\u00f1o",
+  "table_status": "Estado",
+  "table_throughput": "Throughput",
+  "table_vram": "VRAM",
+  "chart_title": "Comparaci\u00f3n de Throughput (tok/s)",
+  "btn_en": "Ingl\u00e9s",
+  "btn_es": "Espa\u00f1ol",
+  "footer": "FreakingJSON Agencia \u2022 Centro de Operaciones AI \u2022 2026"
+}

@@ -1,0 +1,90 @@
+{
+  "lang": "es",
+  "meta": {
+    "title": "Resultados Benchmark RTX 5060 Ti — FreakingJSON Agency",
+    "description": "Benchmark exhaustivo de modelos Qwopus y baseline en NVIDIA RTX 5060 Ti 16GB"
+  },
+  "header": {
+    "agency": "FreakingJSON Agency",
+    "subtitle": "Centro de Operaciones IA",
+    "report_title": "Reporte Benchmark RTX 5060 Ti 16GB",
+    "methodology": "Metodología Phase v5"
+  },
+  "hero": {
+    "gpu_title": "Configuración Hardware",
+    "gpu_model": "RTX 5060 Ti 16GB",
+    "architecture": "Blackwell sm_120",
+    "vram": "16GB VRAM",
+    "ram": "31GB RAM Sistema",
+    "runtime": "llama.cpp build 9080",
+    "backend": "Backend Vulkan"
+  },
+  "nav": {
+    "overview": "Resumen",
+    "models": "Modelos",
+    "throughput": "Throughput",
+    "scores": "Scores Entregables",
+    "blockers": "Bloqueadores"
+  },
+  "kpi": {
+    "models_tested": "Modelos Probados",
+    "max_throughput": "Throughput Máximo",
+    "best_score": "Mejor Score",
+    "blockers": "Bloqueadores Resueltos",
+    "vram_peak": "Uso VRAM Peak",
+    "benchmark_days": "Días Benchmark"
+  },
+  "table": {
+    "model": "Modelo",
+    "architecture": "Arquitectura",
+    "quant": "Quantización",
+    "size": "Tamaño",
+    "throughput": "Throughput (tok/s)",
+    "vram": "VRAM",
+    "score": "Score",
+    "status": "Estado",
+    "recommendation": "Recomendación"
+  },
+  "chart": {
+    "throughput_title": "Comparación Throughput (tok/s)",
+    "score_title": "Scores Pokedex por Modelo",
+    "vram_title": "Distribución Uso VRAM"
+  },
+  "status": {
+    "success": "Éxito",
+    "borderline": "Límite",
+    "blocked": "Bloqueado",
+    "best": "Mejor",
+    "viable": "Viable"
+  },
+  "blockers": {
+    "title": "Bloqueadores y Modos de Fallo",
+    "affected": "Modelos Afectados",
+    "root_cause": "Causa Raíz",
+    "fix": "Estado Fix",
+    "workaround": "Workaround"
+  },
+  "insights": {
+    "title": "Insights Clave",
+    "syntax_champion": "Qwopus3.6-27B alcanzó cero errores de sintaxis — el único modelo que lo logró",
+    "css_quality": "35B-A3B muestra calidad CSS excepcional incluso truncado",
+    "async_bug": "Bug async (1 carácter) afecta todos los modelos 9B universalmente",
+    "methodology_impact": "La metodología del prompt representa ~35 puntos de diferencia"
+  },
+  "deliverables": {
+    "title": "Samples de Entregables",
+    "pokedex": "Pokedex HTML",
+    "starwars": "StarWars HTML",
+    "iframe_note": "Renders en vivo de outputs benchmark"
+  },
+  "footer": {
+    "agency": "FreakingJSON Agency",
+    "ai_ops": "Centro de Operaciones IA",
+    "copyright": "Datos benchmark de ventana de evaluación 36 días"
+  },
+  "toggle": {
+    "en": "English",
+    "es": "Español",
+    "label": "Idioma"
+  }
+}

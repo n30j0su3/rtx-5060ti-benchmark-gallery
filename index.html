@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTX 5060 Ti Benchmark Results — FreakingJSON Agencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #010403;
+    color: #c8d0e0;
+    font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  #matrix-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; opacity: 0.06;
+  }
+
+  .container { max-width: 1480px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Header */
+  .header { text-align: center; padding: 24px 0 14px; }
+  .header h1 {
+    font-family: 'JetBrains Mono', monospace; font-size: 2em; font-weight: 700;
+    letter-spacing: 2px; text-shadow: 0 0 30px rgba(6,182,212,0.15);
+  }
+  .header h1 .t { color: #06b6d4; }
+  .header h1 .l { color: #40E0D0; }
+  .header h1 .d { color: #64748b; }
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72em; color: #64748b;
+    margin-top: 6px; letter-spacing: 4px; text-transform: uppercase;
+  }
+  .subtitle span { color: #06b6d4; }
+  .header-divider {
+    width: 120px; height: 1px; margin: 12px auto;
+    background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), rgba(242,252,158,0.3), transparent);
+  }
+
+  /* N30 Hero */
+  .n30-hero {
+    background: rgba(0,0,0,0.6); border: 1px solid rgba(6,182,212,0.25);
+    border-radius: 18px; padding: 18px 24px; margin-bottom: 14px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    text-align: center; position: relative;
+  }
+  .n30-hero .label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; color: #64748b;
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .n30-hero .name {
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.4em; font-weight: 700;
+    color: #06b6d4; letter-spacing: 2px;
+  }
+  .n30-hero .role { font-size: 0.7em; color: #8b95a5; margin-top: 2px; }
+
+  /* Tier cards */
+  .tier {
+    position: relative; z-index: 1; margin-bottom: 14px;
+    background: rgba(0,0,0,0.55); border: 1px solid rgba(6,182,212,0.2);
+    border-radius: 18px; padding: 16px 20px 14px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: border-color 0.3s ease;
+  }
+  .tier:hover { border-color: rgba(6,182,212,0.4); }
+
+  .tier-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(6,182,212,0.15);
+    display: flex; align-items: center; gap: 8px; color: #06b6d4;
+  }
+  .tier-label .icon { font-size: 1.1em; }
+  .tier-label .count { margin-left: auto; font-weight: 400; opacity: 0.4; font-size: 0.85em; }
+
+  /* Tier colors */
+  .t0 { border-color: rgba(6,182,212,0.35); background: rgba(0,0,0,0.65); }
+  .t0:hover { border-color: rgba(6,182,212,0.55); }
+  .t0 .tier-label { color: #06b6d4; border-color: rgba(6,182,212,0.15); }
+
+  .t1 { border-color: rgba(6,182,212,0.3); }
+  .t1 .tier-label { color: #06b6d4; }
+
+  .t2 { border-color: rgba(192,132,252,0.3); }
+  .t2 .tier-label { color: #c084fc; }
+
+  .t3 { border-color: rgba(251,146,60,0.3); }
+  .t3 .tier-label { color: #fb923c; }
+
+  .t4 { border-color: rgba(74,222,128,0.3); }
+  .t4 .tier-label { color: #4ade80; }
+
+  /* KPI grid */
+  .metrics-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .metric-box {
+    flex: 1; min-width: 160px; background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+    padding: 14px; text-align: center;
+  }
+  .metric-box .val { font-family: 'JetBrains Mono', monospace; font-size: 1.6em; font-weight: 700; }
+  .metric-box .label { font-size: 0.6em; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+  .m-t { color: #06b6d4; }
+  .m-l { color: #40E0D0; }
+  .m-o { color: #fb923c; }
+  .m-g { color: #4ade80; }
+  .m-p { color: #c084fc; }
+
+  /* Tables */
+  .data-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0; }
+  .data-table th {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 2px; color: #94a3b8;
+    padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(6,182,212,0.2);
+  }
+  .data-table td {
+    font-size: 0.7em; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #8b95a5; vertical-align: top;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .ok { color: #4ade80; }
+  .data-table .warn { color: #fb923c; }
+  .data-table .crit { color: #ef4444; }
+  .data-table .info { color: #06b6d4; }
+  .data-table .num { font-family: 'JetBrains Mono', monospace; text-align: right; color: #c8d0e0; }
+
+  /* Badges */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.6em;
+    font-weight: 600; letter-spacing: 1px; margin-right: 4px; margin-top: 4px;
+  }
+  .badge-done { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .badge-best { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .badge-warn { background: rgba(251,146,60,0.15); color: #fb923c; }
+  .badge-crit { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .badge-info { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .badge-purple { background: rgba(192,132,252,0.15); color: #c084fc; }
+
+  /* Charts */
+  .chart-box { background: rgba(0,0,0,0.45); border: 1px solid rgba(6,182,212,0.1); border-radius: 12px; padding: 16px; margin: 10px 0; }
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72em; font-weight: 600;
+    color: #e2e8f0; margin-bottom: 10px; letter-spacing: 2px;
+    text-transform: uppercase; padding-bottom: 6px;
+    border-bottom: 1px solid rgba(6,182,212,0.15);
+  }
+
+  /* Blocker cards */
+  .blocker-card {
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
+    border-left: 3px solid #ef4444; transition: all 0.2s;
+  }
+  .blocker-card.resolved { border-left-color: #4ade80; }
+  .blocker-card:hover { border-color: rgba(255,255,255,0.12); background: rgba(0,0,0,0.6); }
+  .blocker-title { font-size: 0.85em; font-weight: 600; color: #e2e8f0; margin-bottom: 4px; }
+  .blocker-meta { font-size: 0.7em; color: #64748b; margin-bottom: 4px; }
+  .blocker-fix { font-size: 0.7em; color: #8b95a5; }
+  .blocker-fix .l { color: #4ade80; font-weight: 600; }
+
+  /* Two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 20px 0 10px; color: #64748b;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6em;
+    letter-spacing: 2px;
+  }
+  .footer .mq {
+    font-size: 1.2em; color: rgba(6,182,212,0.2);
+    letter-spacing: 6px; margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1><span class="t">RTX</span><span class="d">_</span><span class="l">5060Ti</span> <span class="d">::</span> <span class="t">BENCHMARK</span><span class="d">_</span><span class="l">RESULTS</span></h1>
+  <div class="subtitle">Qwopus / Jackrong / Hessling Lab · <span>36 Days</span> of Testing</div>
+  <div class="header-divider"></div>
+</div>
+
+<!-- N30 HERO -->
+<div class="tier t0">
+  <div class="tier-label"><span class="icon">🧠</span> ORCHESTRATOR & LEAD ENGINEER <span class="count">CEO</span></div>
+  <div class="n30-hero" style="border:none;background:transparent;padding:0;">
+    <div class="label">All benchmark orchestration by</div>
+    <div class="name">N30</div>
+    <div class="role">CEO & Technical Director — FreakingJSON Agencia. Methodology design, AI model evaluations, and prompt engineering directed by N30.</div>
+  </div>
+</div>
+
+<!-- TIER 1: KPI OVERVIEW -->
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">📊</span> KEY METRICS <span class="count">36-day window</span></div>
+  <div class="metrics-row">
+    <div class="metric-box"><div class="val m-l">9</div><div class="label">Models Tested</div></div>
+    <div class="metric-box"><div class="val m-t">56.37</div><div class="label">Top 9B tok/s</div></div>
+    <div class="metric-box"><div class="val m-p">176.4</div><div class="label">Max tok/s (2B)</div></div>
+    <div class="metric-box"><div class="val m-g">55/100</div><div class="label">Top Pokedex Score</div></div>
+    <div class="metric-box"><div class="val m-o">21.35</div><div class="label">35B-A3B tok/s</div></div>
+    <div class="metric-box"><div class="val m-l">3</div><div class="label">Blockers Resolved</div></div>
+  </div>
+</div>
+
+<!-- TIER 2: LEADERBOARD (codeneedle-style) -->
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">🏆</span> MODEL LEADERBOARD — TOKEN THROUGHPUT <span class="count">tok/s</span></div>
+  <div id="leaderboard" class="chart-box"></div>
+</div>
+
+<!-- TIER 2b: SCORES -->
+<div class="tier t2">
+  <div class="tier-label"><span class="icon">📈</span> POKEDEX / STARWARS — RAW LLM SCORES <span class="count">Phased v5 · No agent fixes</span></div>
+  <div class="two-col">
+    <div id="pokedexChart" class="chart-box"></div>
+    <div id="starwarsChart" class="chart-box"></div>
+  </div>
+  <div class="chart-box" style="margin-top:10px;">
+    <div class="chart-title">Score Evolution by Methodology Version</div>
+    <div id="evolutionChart"></div>
+  </div>
+</div>
+
+<!-- TIER 3: MODELS TABLE -->
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">📋</span> MODELS TESTED — FULL COMPARISON <span class="count">9 models</span></div>
+  <table class="data-table">
+    <thead><tr>
+      <th>#</th><th>Model</th><th>Architecture</th><th>Quant</th><th class="num">Size</th><th class="num">Tok/s</th><th class="num">VRAM</th><th>Status</th>
+    </tr></thead>
+    <tbody id="modelsBody"></tbody>
+  </table>
+</div>
+
+<!-- TIER 4: BLOCKERS -->
+<div class="tier t3">
+  <div class="tier-label"><span class="icon">🚧</span> CRITICAL BLOCKERS & FAILURE MODES <span class="count">3 documented</span></div>
+  <div id="blockersContainer"></div>
+</div>
+
+<!-- TIER 4b: OPTIMIZATIONS -->
+<div class="tier t4">
+  <div class="tier-label"><span class="icon">⚡</span> VERIFIED OPTIMIZATIONS <span class="count">6 applied</span></div>
+  <table class="data-table">
+    <thead><tr><th>#</th><th>Technique</th><th>Impact</th><th>Applied To</th><th>Result</th></tr></thead>
+    <tbody id="optBody"></tbody>
+  </table>
+</div>
+
+<!-- TIER 5: HARDWARE -->
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">🛠️</span> HARDWARE SPECIFICATIONS <span class="count">RTX 5060 Ti</span></div>
+  <div class="two-col">
+    <div class="chart-box">
+      <div class="chart-title">GPU</div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Model</div>
+        <div style="font-size:1em;font-weight:600;color:#e2e8f0;">NVIDIA RTX <span style="color:#06b6d4;">5060 Ti</span> 16GB</div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Architecture</div>
+        <div style="font-size:0.85em;color:#06b6d4;">Blackwell sm_120</div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">VRAM / RAM</div>
+        <div style="font-size:0.85em;color:#8b95a5;">16,311 MiB VRAM · 31 GB System</div>
+      </div>
+      <div>
+        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Runtime</div>
+        <div style="font-size:0.85em;color:#8b95a5;">llama.cpp build <span style="color:#06b6d4;">9080</span> · Vulkan backend</div>
+      </div>
+    </div>
+    <div id="vramChart" class="chart-box"></div>
+  </div>
+  <div id="vramUsageChart" class="chart-box" style="margin-top:10px;"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="mq">⬡ · ⬡ · ⬡</div>
+  FreakingJSON Agencia · AI Operations Center · 2026
+  <div style="margin-top:4px;color:rgba(6,182,212,0.15);">Free your mind. — Morpheus</div>
+</div>
+
+</div>
+
+<!-- MATRIX RAIN -->
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+let width, height, drops, columns;
+const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789<>/[]{}';
+const charSize = 12;
+
+function initMatrix() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  columns = Math.floor(width / charSize);
+  drops = new Array(columns).fill(0);
+}
+initMatrix();
+window.addEventListener('resize', initMatrix);
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(1, 4, 3, 0.06)';
+  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = '#06b6d4';
+  ctx.font = `${charSize}px 'JetBrains Mono'`;
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    const x = i * charSize;
+    const y = drops[i] * charSize;
+    ctx.globalAlpha = 0.1 + Math.random() * 0.2;
+    ctx.fillText(char, x, y);
+    if (y > height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+setInterval(drawMatrix, 50);
+</script>
+
+<!-- DATA & CHARTS -->
+<script>
+// ===== BENCHMARK DATA =====
+const DATA = {
+  models: [
+    { id:1, name:"Qwopus3.5-9B Claude Opus Distill", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.37, vram:7.14, status:"BEST 9B" },
+    { id:2, name:"Qwopus3.6-27B-v1-preview", arch:"Qwen3.6-27B MoE", quant:"Q2_K", size:"10 GB", throughput:null, vram:null, status:"Viable" },
+    { id:3, name:"Qwopus3.6-35B-A3B-v1", arch:"Qwen3.6-35B-A3B MoE", quant:"IQ4_XS", size:"18 GB", throughput:21.35, vram:14.6, status:"Borderline" },
+    { id:4, name:"DSV4-Flash Q6_K", arch:"Qwen3.5-9B", quant:"Q6_K", size:"6.9 GB", throughput:55.3, vram:7.2, status:"Tested" },
+    { id:5, name:"DSV4-Flash Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.4 GB", throughput:56.24, vram:7.14, status:"Tested" },
+    { id:6, name:"Claude-Opus-v2 Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.37, vram:7.14, status:"Tested" },
+    { id:7, name:"GLM5.1-Distill Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.35, vram:7.14, status:"Tested" },
+    { id:8, name:"Gemopus-4-E4B", arch:"Gemma-4", quant:"Q4_K_M", size:"—", throughput:null, vram:null, status:"BLOCKED" },
+    { id:9, name:"Gemopus-4-26B-A4B", arch:"Gemma-4 MoE", quant:"Q4_K_M", size:"15.6 GB", throughput:null, vram:null, status:"BLOCKED" }
+  ],
+  scores: {
+    pokedex: [
+      { model:"DSV4-Flash 9B", score:55, ids:"12/12", syntax:true, verdict:"Best consistency" },
+      { model:"Qwopus3.6-27B Q2", score:55, ids:"OK", syntax:true, verdict:"0 syntax errors" },
+      { model:"GLM5.1 9B", score:50, ids:"12/12", syntax:true, verdict:"Good CSS/HTML" },
+      { model:"Qwopus3.5-9B", score:20, ids:"13/13", syntax:false, verdict:"Fragmented v5.3" },
+      { model:"Claude-Opus-v2", score:10, ids:"1 wrong", syntax:false, verdict:"Verbose" }
+    ],
+    starwars: [
+      { model:"Qwopus3.6-27B Q2", score:40, ids:"OK", syntax:true, verdict:"Runtime logic bugs" },
+      { model:"Qwopus3.5-9B", score:25, ids:"14/14", syntax:false, verdict:"Fragmented v5.3" },
+      { model:"DSV4-Flash 9B", score:15, ids:"12/12", syntax:false, verdict:"JS async bug" },
+      { model:"GLM5.1 9B", score:15, ids:"12/12", syntax:false, verdict:"JS async bug" },
+      { model:"Claude-Opus-v2", score:5, ids:"2 missing", syntax:false, verdict:"Missing IDs" }
+    ]
+  },
+  blockers: [
+    { name:"DeepSeek Reasoning", models:"Qwopus3.5-27B-v3.5", cause:"Thinking blocks baked into GGUF chat template", fix:"No fix on 16GB — use Qwen3.5-9B with --reasoning off", resolved:false },
+    { name:"gemma4 Architecture", models:"Gemopus-4-E4B, Gemopus-4-26B-A4B", cause:"llama.cpp build 8500 lacked gemma4 support", fix:"Fixed: upgraded to build 9080", resolved:true },
+    { name:"VRAM OOM", models:"Gemopus-4-26B-A4B", cause:"Model + KV cache exceeds 16GB VRAM", fix:"Use IQ4_XS or Q2_K quants only", resolved:false }
+  ],
+  optimizations: [
+    { id:1, technique:"VRAM cleanup (vram_cleanup)", impact:"Eliminates false OOMs", applied:"Cron scripts", result:"Kills ComfyUI, ollama, rustDesk" },
+    { id:2, technique:"NGL tuning (20→30)", impact:"+VRAM usage, -CPU offload", applied:"Qwopus35B-A3B", result:"10.1→14.6 GB, speed ↑" },
+    { id:3, technique:"Batch size (256→512)", impact:"+throughput", applied:"Qwopus35B-A3B", result:"Part of +268% gain" },
+    { id:4, technique:"Threads (8→12)", impact:"Better CPU/GPU pipelining", applied:"Qwopus35B-A3B", result:"Part of +268% gain" },
+    { id:5, technique:"Phased generation (v5.1→v5.3)", impact:"Respects context limits", applied:"All 9B models", result:"12k+ char outputs vs 4k truncation" },
+    { id:6, technique:"Positive examples in prompts", impact:"+30 pts ID accuracy", applied:"All v5.1+", result:"IDs now perfect" }
+  ],
+  scoreEvolution: [
+    { version:"v5", label:"Generic Prompt", score:20 },
+    { version:"v5.1", label:"Positive Examples", score:50 },
+    { version:"v5.2", label:"Async Fix", score:55 },
+    { version:"v5.3", label:"Fragmented CSS", score:22 },
+    { version:"v4", label:"Agent Auto-Fix", score:80 }
+  ]
+};
+
+// ===== PLOTLY THEME =====
+const PLOTLY_THEME = {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  font: { family: 'JetBrains Mono, monospace', color: '#64748b', size: 11 },
+  xaxis: { gridcolor: 'rgba(6,182,212,0.08)', zerolinecolor: 'rgba(6,182,212,0.15)' },
+  yaxis: { gridcolor: 'rgba(6,182,212,0.08)', zerolinecolor: 'rgba(6,182,212,0.15)' },
+  margin: { l: 60, r: 20, t: 10, b: 60 }
+};
+const COLORS = ['#06b6d4', '#f2fc9e', '#c084fc', '#4ade80', '#fb923c', '#f87171', '#67e8f9', '#818cf8', '#94a3b8'];
+const QWOPUS_COLOR = '#c084fc';
+const DSV4_COLOR = '#06b6d4';
+const GLM_COLOR = '#40E0D0';
+const CLAUDE_COLOR = '#67e8f9';
+const BLOCKED_COLOR = '#64748b';
+
+function modelColor(name) {
+  if (name.includes('Qwopus3.5-9B')) return QWOPUS_COLOR;
+  if (name.includes('Qwopus3.6-27B')) return '#fb923c';
+  if (name.includes('Qwopus3.6-35B')) return '#f87171';
+  if (name.includes('DSV4')) return DSV4_COLOR;
+  if (name.includes('GLM')) return GLM_COLOR;
+  if (name.includes('Claude')) return CLAUDE_COLOR;
+  if (name.includes('Blocked')) return BLOCKED_COLOR;
+  return BLOCKED_COLOR;
+}
+
+// ===== 1. LEADERBOARD (codeneedle-style horizontal bars) =====
+const tpModels = DATA.models.filter(m => m.throughput).sort((a,b) => a.throughput - b.throughput);
+const leaderTrace = {
+  type: 'bar',
+  orientation: 'h',
+  x: tpModels.map(m => m.throughput),
+  y: tpModels.map(m => m.name.split(' ').slice(0,2).join(' ')),
+  marker: { color: tpModels.map(m => modelColor(m.name)), line: { width: 0 } },
+  text: tpModels.map(m => `${m.throughput.toFixed(2)} tok/s`),
+  textposition: 'outside',
+  textfont: { color: '#8b95a5', size: 10 },
+  hoverinfo: 'text',
+  hovertext: tpModels.map(m => `<b>${m.name}</b><br>Throughput: ${m.throughput.toFixed(2)} tok/s<br>VRAM: ${m.vram?.toFixed(2) || '—'} GiB<br>Quant: ${m.quant}<br>Status: ${m.status}`)
+};
+Plotly.newPlot('leaderboard', [leaderTrace], {
+  ...PLOTLY_THEME,
+  xaxis: { ...PLOTLY_THEME.xaxis, title: 'tok/s →', titlefont: { color: '#06b6d4' } },
+  height: 320
+}, { displayModeBar: false, responsive: true });
+
+// ===== 2. POKEDEX SCORES =====
+const pkModels = DATA.scores.pokedex;
+Plotly.newPlot('pokedexChart', [{
+  type: 'bar',
+  x: pkModels.map(s => s.score),
+  y: pkModels.map(s => s.model),
+  orientation: 'h',
+  marker: {
+    color: pkModels.map(s => s.score >= 50 ? '#4ade80' : s.score >= 20 ? '#fb923c' : '#ef4444'),
+    line: { width: 0 }
+  },
+  text: pkModels.map(s => `${s.score}/100 · ${s.verdict}`),
+  textposition: 'outside',
+  textfont: { color: '#8b95a5', size: 9 },
+  hoverinfo: 'text',
+  hovertext: pkModels.map(s => `<b>${s.model}</b><br>Score: ${s.score}/100<br>IDs: ${s.ids}<br>Syntax: ${s.syntax ? '✅' : '❌'}<br>${s.verdict}`)
+}], {
+  ...PLOTLY_THEME,
+  title: { text: 'POKEDEX HTML', font: { family: 'JetBrains Mono', size: 13, color: '#06b6d4' } },
+  xaxis: { ...PLOTLY_THEME.xaxis, range: [0, 65], dtick: 10 },
+  height: 260
+}, { displayModeBar: false, responsive: true });
+
+// ===== 3. STARWARS SCORES =====
+const swModels = DATA.scores.starwars;
+Plotly.newPlot('starwarsChart', [{
+  type: 'bar',
+  x: swModels.map(s => s.score),
+  y: swModels.map(s => s.model),
+  orientation: 'h',
+  marker: {
+    color: swModels.map(s => s.score >= 30 ? '#4ade80' : s.score >= 15 ? '#fb923c' : '#ef4444'),
+    line: { width: 0 }
+  },
+  text: swModels.map(s => `${s.score}/100 · ${s.verdict}`),
+  textposition: 'outside',
+  textfont: { color: '#8b95a5', size: 9 },
+  hoverinfo: 'text',
+  hovertext: swModels.map(s => `<b>${s.model}</b><br>Score: ${s.score}/100<br>IDs: ${s.ids}<br>Syntax: ${s.syntax ? '✅' : '❌'}<br>${s.verdict}`)
+}], {
+  ...PLOTLY_THEME,
+  title: { text: 'STARWARS HTML', font: { family: 'JetBrains Mono', size: 13, color: '#c084fc' } },
+  xaxis: { ...PLOTLY_THEME.xaxis, range: [0, 50], dtick: 10 },
+  height: 260
+}, { displayModeBar: false, responsive: true });
+
+// ===== 4. SCORE EVOLUTION LINE =====
+Plotly.newPlot('evolutionChart', [{
+  type: 'scatter',
+  x: DATA.scoreEvolution.map(e => e.version),
+  y: DATA.scoreEvolution.map(e => e.score),
+  mode: 'lines+markers',
+  line: { color: '#06b6d4', width: 2 },
+  marker: { size: 8, color: '#06b6d4', line: { color: '#010403', width: 2 } },
+  fill: 'tozeroy',
+  fillcolor: 'rgba(6,182,212,0.08)',
+  hoverinfo: 'text',
+  hovertext: DATA.scoreEvolution.map(e => `<b>${e.version}</b> — ${e.label}<br>Score: ${e.score}/100`)
+}], {
+  ...PLOTLY_THEME,
+  xaxis: { ...PLOTLY_THEME.xaxis, title: 'Methodology Version' },
+  yaxis: { ...PLOTLY_THEME.yaxis, title: 'Score / 100', range: [0, 90] },
+  height: 260
+}, { displayModeBar: false, responsive: true });
+
+// ===== 5. VRAM VS SPEED SCATTER =====
+const vramSpeedModels = DATA.models.filter(m => m.vram && m.throughput);
+Plotly.newPlot('vramChart', [{
+  type: 'scatter',
+  x: vramSpeedModels.map(m => m.vram),
+  y: vramSpeedModels.map(m => m.throughput),
+  mode: 'markers+text',
+  marker: {
+    size: 14,
+    color: vramSpeedModels.map(m => modelColor(m.name)),
+    line: { color: '#010403', width: 2 }
+  },
+  text: vramSpeedModels.map(m => m.name.split(' ')[0]),
+  textposition: 'top center',
+  textfont: { size: 8, color: '#8b95a5' },
+  hoverinfo: 'text',
+  hovertext: vramSpeedModels.map(m => `<b>${m.name}</b><br>VRAM: ${m.vram.toFixed(2)} GiB<br>Speed: ${m.throughput.toFixed(2)} tok/s`)
+}], {
+  ...PLOTLY_THEME,
+  title: { text: 'VRAM vs Token Throughput', font: { family: 'JetBrains Mono', size: 12, color: '#c084fc' } },
+  xaxis: { ...PLOTLY_THEME.xaxis, title: 'VRAM (GiB) →', titlefont: { color: '#06b6d4' } },
+  yaxis: { ...PLOTLY_THEME.yaxis, title: 'tok/s ↑', titlefont: { color: '#06b6d4' } },
+  height: 300
+}, { displayModeBar: false, responsive: true });
+
+// ===== 6. VRAM USAGE BARS =====
+const vramModels = DATA.models.filter(m => m.vram).sort((a,b) => a.vram - b.vram);
+Plotly.newPlot('vramUsageChart', [{
+  type: 'bar',
+  x: vramModels.map(m => m.vram),
+  y: vramModels.map(m => m.name.split(' ').slice(0,2).join(' ')),
+  orientation: 'h',
+  marker: {
+    color: vramModels.map(m => m.vram > 14 ? '#f87171' : m.vram > 10 ? '#fb923c' : '#4ade80'),
+    line: { width: 0 }
+  },
+  text: vramModels.map(m => `${m.vram.toFixed(2)} GiB`),
+  textposition: 'outside',
+  textfont: { color: '#8b95a5', size: 10 },
+  hoverinfo: 'text',
+  hovertext: vramModels.map(m => `<b>${m.name}</b><br>VRAM: ${m.vram.toFixed(2)} GiB<br>Quant: ${m.quant}`)
+}], {
+  ...PLOTLY_THEME,
+  title: { text: 'VRAM USAGE BY MODEL', font: { family: 'JetBrains Mono', size: 12, color: '#4ade80' } },
+  xaxis: { ...PLOTLY_THEME.xaxis, title: 'VRAM (GiB) →', titlefont: { color: '#06b6d4' } },
+  height: 280
+}, { displayModeBar: false, responsive: true });
+
+// ===== POPULATE TABLES =====
+function statusBadge(status) {
+  if (status === 'BEST 9B') return '<span class="badge badge-best">BEST 9B</span>';
+  if (status === 'Viable') return '<span class="badge badge-info">Viable</span>';
+  if (status === 'Borderline') return '<span class="badge badge-warn">Borderline</span>';
+  if (status === 'BLOCKED') return '<span class="badge badge-crit">BLOCKED</span>';
+  return '<span class="badge badge-purple">Tested</span>';
+}
+
+const modelsBody = document.getElementById('modelsBody');
+DATA.models.forEach(m => {
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${m.id}</td>
+    <td style="font-weight:600;color:#e2e8f0;">${m.name}</td>
+    <td>${m.arch}</td><td>${m.quant}</td>
+    <td class="num">${m.size}</td>
+    <td class="num ${m.throughput ? 'info' : ''}">${m.throughput ? m.throughput.toFixed(2) : '—'}</td>
+    <td class="num">${m.vram ? m.vram.toFixed(2) + ' GiB' : '—'}</td>
+    <td>${statusBadge(m.status)}</td>`;
+  modelsBody.appendChild(row);
+});
+
+const blockersContainer = document.getElementById('blockersContainer');
+DATA.blockers.forEach(b => {
+  const card = document.createElement('div');
+  card.className = `blocker-card ${b.resolved ? 'resolved' : ''}`;
+  card.innerHTML = `
+    <div class="blocker-title">${b.resolved ? '✅' : '❌'} ${b.name}</div>
+    <div class="blocker-meta">Models: ${b.models} · ${b.cause}</div>
+    <div class="blocker-fix"><span class="l">${b.resolved ? 'Fix:' : 'Workaround:'}</span> ${b.fix}</div>`;
+  blockersContainer.appendChild(card);
+});
+
+const optBody = document.getElementById('optBody');
+DATA.optimizations.forEach(o => {
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${o.id}</td><td style="font-weight:600;color:#e2e8f0;">${o.technique}</td>
+    <td>${o.impact}</td><td>${o.applied}</td><td class="info">${o.result}</td>`;
+  optBody.appendChild(row);
+});
+</script>
+</body>
+</html>

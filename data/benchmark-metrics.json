@@ -1,0 +1,226 @@
+{
+  "meta": {
+    "agency": "FreakingJSON Agency",
+    "prepared_by": "N30",
+    "date": "2026-05-09",
+    "hardware": "NVIDIA RTX 5060 Ti 16GB (Blackwell sm_120)",
+    "runtime": "llama.cpp build 9080",
+    "backend": "Vulkan",
+    "benchmark_window": "2026-04-24 \u2192 2026-05-08 (36 days)"
+  },
+  "models": [
+    {
+      "name": "Qwopus3.5-9B Claude Opus Distill",
+      "arch": "Qwen3.5-9B",
+      "quant": "Q4_K_M",
+      "size_gb": 5.3,
+      "status": "BEST 9B",
+      "throughput_toks": 56.37,
+      "vram_gib": 7.142
+    },
+    {
+      "name": "Qwopus3.6-27B-v1-preview",
+      "arch": "Qwen3.6-27B MoE",
+      "quant": "Q2_K",
+      "size_gb": 10,
+      "status": "Viable",
+      "throughput_toks": null,
+      "vram_gib": null
+    },
+    {
+      "name": "Qwopus3.6-35B-A3B-v1",
+      "arch": "Qwen3.6-35B-A3B MoE",
+      "quant": "IQ4_XS",
+      "size_gb": 18,
+      "status": "Borderline",
+      "throughput_toks": 21.35,
+      "vram_gib": 14.6
+    },
+    {
+      "name": "Qwen3.5-9B DeepSeek-V4-Flash",
+      "arch": "Qwen3.5-9B",
+      "quant": "Q6_K",
+      "size_gb": 6.9,
+      "status": "Tested",
+      "throughput_toks": 55.3,
+      "vram_gib": 7.2
+    },
+    {
+      "name": "Qwen3.5-9B DeepSeek-V4-Flash",
+      "arch": "Qwen3.5-9B",
+      "quant": "Q4_K_M",
+      "size_gb": 5.4,
+      "status": "Tested",
+      "throughput_toks": 56.24,
+      "vram_gib": 7.142
+    },
+    {
+      "name": "Qwen3.5-9B Claude-Opus-v2",
+      "arch": "Qwen3.5-9B",
+      "quant": "Q4_K_M",
+      "size_gb": 5.3,
+      "status": "Tested",
+      "throughput_toks": 56.37,
+      "vram_gib": 7.142
+    },
+    {
+      "name": "Qwen3.5-9B GLM5.1-Distill",
+      "arch": "Qwen3.5-9B",
+      "quant": "Q4_K_M",
+      "size_gb": 5.3,
+      "status": "Tested",
+      "throughput_toks": 56.35,
+      "vram_gib": 7.142
+    },
+    {
+      "name": "Gemopus-4-E4B",
+      "arch": "Gemma-4",
+      "quant": "Q4_K_M",
+      "size_gb": null,
+      "status": "BLOCKED",
+      "blocker": "gemma4 arch unsupported"
+    },
+    {
+      "name": "Gemopus-4-26B-A4B",
+      "arch": "Gemma-4 MoE",
+      "quant": "Q4_K_M",
+      "size_gb": 15.6,
+      "status": "BLOCKED",
+      "blocker": "VRAM > 16GB"
+    }
+  ],
+  "scores": {
+    "pokedex": {
+      "DSV4-Flash_9B": {
+        "ids": "12/12",
+        "syntax": true,
+        "bugs": 0,
+        "score": 55,
+        "verdict": "Best consistency"
+      },
+      "GLM5.1_9B": {
+        "ids": "12/12",
+        "syntax": true,
+        "bugs": 0,
+        "score": 50,
+        "verdict": "Good CSS/HTML"
+      },
+      "Claude-Opus-v2_9B": {
+        "ids": "1 wrong",
+        "syntax": false,
+        "bugs": 0,
+        "score": 10,
+        "verdict": "Verbose"
+      },
+      "Qwopus3.6-27B_Q2_K": {
+        "ids": "OK",
+        "syntax": true,
+        "bugs": 0,
+        "score": 55,
+        "verdict": "0 syntax errors v5.2"
+      },
+      "Qwopus3.5-9B_Claude": {
+        "ids": "13/13",
+        "syntax": false,
+        "bugs": null,
+        "score": 20,
+        "verdict": "Fragmented v5.3"
+      }
+    },
+    "starwars": {
+      "DSV4-Flash_9B": {
+        "ids": "12/12",
+        "syntax": false,
+        "bugs": 0,
+        "score": 15,
+        "verdict": "JS async bug"
+      },
+      "GLM5.1_9B": {
+        "ids": "12/12",
+        "syntax": false,
+        "bugs": 0,
+        "score": 15,
+        "verdict": "JS async bug"
+      },
+      "Claude-Opus-v2_9B": {
+        "ids": "2 missing",
+        "syntax": false,
+        "bugs": 0,
+        "score": 5,
+        "verdict": "Missing IDs"
+      },
+      "Qwopus3.6-27B_Q2_K": {
+        "ids": "OK",
+        "syntax": true,
+        "bugs": 0,
+        "score": 40,
+        "verdict": "Runtime logic bugs"
+      },
+      "Qwopus3.5-9B_Claude": {
+        "ids": "14/14",
+        "syntax": false,
+        "bugs": null,
+        "score": 25,
+        "verdict": "Fragmented v5.3"
+      }
+    }
+  },
+  "blockers": [
+    {
+      "id": 1,
+      "name": "DeepSeek Reasoning",
+      "models": [
+        "Qwopus3.5-27B-v3.5"
+      ],
+      "cause": "Thinking blocks baked into GGUF",
+      "fix": "No fix on 16GB \u2014 use Qwen3.5-9B with --reasoning off"
+    },
+    {
+      "id": 2,
+      "name": "gemma4 Architecture",
+      "models": [
+        "Gemopus-4-E4B",
+        "Gemopus-4-26B-A4B"
+      ],
+      "cause": "llama.cpp build 8500 lacked gemma4 support",
+      "fix": "Fixed: upgraded to build 9080"
+    },
+    {
+      "id": 3,
+      "name": "VRAM OOM",
+      "models": [
+        "Gemopus-4-26B-A4B"
+      ],
+      "cause": "Model + KV cache > 16GB",
+      "fix": "Use IQ4_XS or Q2_K only"
+    },
+    {
+      "id": 4,
+      "name": "NTFS Reparse Corruption",
+      "models": [
+        "6 of 7 original models"
+      ],
+      "cause": "HuggingFace cache symlinks broken",
+      "fix": "Fixed: fallback paths to /media"
+    },
+    {
+      "id": 5,
+      "name": "llama-server Slot Exhaustion",
+      "models": [
+        "All models"
+      ],
+      "cause": "Failed generations don't release slots",
+      "fix": "Fixed: kill/restart server between suites"
+    }
+  ],
+  "hardware": {
+    "gpu": "NVIDIA RTX 5060 Ti 16GB",
+    "architecture": "Blackwell sm_120",
+    "vram_total_mib": 16311,
+    "vram_usable_gb": 15.3,
+    "system_ram_gb": 31,
+    "nvme_total_gb": 468,
+    "nvme_used_pct": 91,
+    "media_2tb_used_pct": 41
+  }
+}
