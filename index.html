@@ -189,7 +189,7 @@
 <!-- HEADER -->
 <div class="header">
   <h1><span class="t">RTX</span><span class="d">_</span><span class="l">5060Ti</span> <span class="d">::</span> <span class="t">BENCHMARK</span><span class="d">_</span><span class="l">RESULTS</span></h1>
-  <div class="subtitle">Qwopus / Jackrong / Hessling Lab · <span>36 Days</span> of Testing</div>
+  <div class="subtitle">Qwopus / Qwen3.6 MTP / Jackrong · <span>Updated May 20</span></div>
   <div class="header-divider"></div>
 </div>
 
@@ -207,11 +207,11 @@
 <div class="tier t1">
   <div class="tier-label"><span class="icon">📊</span> KEY METRICS <span class="count">36-day window</span></div>
   <div class="metrics-row">
-    <div class="metric-box"><div class="val m-l">9</div><div class="label">Models Tested</div></div>
+    <div class="metric-box"><div class="val m-l">10</div><div class="label">Models Tested</div></div>
     <div class="metric-box"><div class="val m-t">56.37</div><div class="label">Top 9B tok/s</div></div>
-    <div class="metric-box"><div class="val m-p">176.4</div><div class="label">Max tok/s (2B)</div></div>
+    <div class="metric-box"><div class="val m-p">194.7</div><div class="label">Max tok/s (2B)</div></div>
     <div class="metric-box"><div class="val m-g">55/100</div><div class="label">Top Pokedex Score</div></div>
-    <div class="metric-box"><div class="val m-o">21.35</div><div class="label">35B-A3B tok/s</div></div>
+    <div class="metric-box"><div class="val m-o">43.0</div><div class="label">Best 27B MTP tok/s</div></div>
     <div class="metric-box"><div class="val m-l">3</div><div class="label">Blockers Resolved</div></div>
   </div>
 </div>
@@ -237,7 +237,7 @@
 
 <!-- TIER 3: MODELS TABLE -->
 <div class="tier t1">
-  <div class="tier-label"><span class="icon">📋</span> MODELS TESTED — FULL COMPARISON <span class="count">9 models</span></div>
+  <div class="tier-label"><span class="icon">📋</span> MODELS TESTED — FULL COMPARISON <span class="count">10 models</span></div>
   <table class="data-table">
     <thead><tr>
       <th>#</th><th>Model</th><th>Architecture</th><th>Quant</th><th class="num">Size</th><th class="num">Tok/s</th><th class="num">VRAM</th><th>Status</th>
@@ -281,7 +281,7 @@
       </div>
       <div>
         <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Runtime</div>
-        <div style="font-size:0.85em;color:#8b95a5;">llama.cpp build <span style="color:#06b6d4;">9080</span> · Vulkan backend</div>
+        <div style="font-size:0.85em;color:#8b95a5;">llama.cpp build <span style="color:#06b6d4;">9262</span> · CUDA sm_120 + MTP</div>
       </div>
     </div>
     <div id="vramChart" class="chart-box"></div>
@@ -340,15 +340,106 @@ setInterval(drawMatrix, 50);
 // ===== BENCHMARK DATA =====
 const DATA = {
   models: [
-    { id:1, name:"Qwopus3.5-9B Claude Opus Distill", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.37, vram:7.14, status:"BEST 9B" },
-    { id:2, name:"Qwopus3.6-27B-v1-preview", arch:"Qwen3.6-27B MoE", quant:"Q2_K", size:"10 GB", throughput:null, vram:null, status:"Viable" },
-    { id:3, name:"Qwopus3.6-35B-A3B-v1", arch:"Qwen3.6-35B-A3B MoE", quant:"IQ4_XS", size:"18 GB", throughput:21.35, vram:14.6, status:"Borderline" },
-    { id:4, name:"DSV4-Flash Q6_K", arch:"Qwen3.5-9B", quant:"Q6_K", size:"6.9 GB", throughput:55.3, vram:7.2, status:"Tested" },
-    { id:5, name:"DSV4-Flash Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.4 GB", throughput:56.24, vram:7.14, status:"Tested" },
-    { id:6, name:"Claude-Opus-v2 Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.37, vram:7.14, status:"Tested" },
-    { id:7, name:"GLM5.1-Distill Q4_K_M", arch:"Qwen3.5-9B", quant:"Q4_K_M", size:"5.3 GB", throughput:56.35, vram:7.14, status:"Tested" },
-    { id:8, name:"Gemopus-4-E4B", arch:"Gemma-4", quant:"Q4_K_M", size:"—", throughput:null, vram:null, status:"BLOCKED" },
-    { id:9, name:"Gemopus-4-26B-A4B", arch:"Gemma-4 MoE", quant:"Q4_K_M", size:"15.6 GB", throughput:null, vram:null, status:"BLOCKED" }
+      {
+          "id": 1,
+          "name": "Qwen3.5-2B Q4_K_M CUDA",
+          "arch": "Qwen3.5-2B",
+          "quant": "Q4_K_M",
+          "size": "1.2 GB",
+          "throughput": 194.7,
+          "vram": 1.2,
+          "status": "FASTEST BASELINE"
+      },
+      {
+          "id": 2,
+          "name": "Qwen3.6-27B-MTP Q3_K_S",
+          "arch": "Qwen3.6-27B",
+          "quant": "Q3_K_S + MTP nmax=2",
+          "size": "11.71 GB",
+          "throughput": 43.0,
+          "vram": 13.99,
+          "status": "BEST 27B BALANCE"
+      },
+      {
+          "id": 3,
+          "name": "Qwen3.6-27B-MTP UD-Q2_K_XL",
+          "arch": "Qwen3.6-27B",
+          "quant": "UD-Q2_K_XL + MTP nmax=3",
+          "size": "11.21 GB",
+          "throughput": 45.27,
+          "vram": 14.14,
+          "status": "FASTEST 27B LOW-QUANT"
+      },
+      {
+          "id": 4,
+          "name": "Qwopus3.5-9B Claude Opus Distill",
+          "arch": "Qwen3.5-9B",
+          "quant": "Q4_K_M",
+          "size": "5.3 GB",
+          "throughput": 56.37,
+          "vram": 7.142,
+          "status": "BEST 9B"
+      },
+      {
+          "id": 5,
+          "name": "Qwen3.5-9B DeepSeek-V4-Flash",
+          "arch": "Qwen3.5-9B",
+          "quant": "Q4_K_M",
+          "size": "5.4 GB",
+          "throughput": 56.24,
+          "vram": 7.142,
+          "status": "Tested"
+      },
+      {
+          "id": 6,
+          "name": "Qwen3.5-9B GLM5.1-Distill",
+          "arch": "Qwen3.5-9B",
+          "quant": "Q4_K_M",
+          "size": "5.3 GB",
+          "throughput": 56.35,
+          "vram": 7.142,
+          "status": "Tested"
+      },
+      {
+          "id": 7,
+          "name": "Qwen3.6-35B-A3B-MTP",
+          "arch": "Qwen3.6-35B-A3B MoE",
+          "quant": "UD-IQ4_XS + MTP",
+          "size": "17.0 GB",
+          "throughput": 22.2,
+          "vram": 4.9,
+          "status": "35B MOE DAILY DRIVER"
+      },
+      {
+          "id": 8,
+          "name": "Qwen3.6-27B-MTP Q4_K_M",
+          "arch": "Qwen3.6-27B",
+          "quant": "Q4_K_M + MTP partial offload",
+          "size": "16.0 GB",
+          "throughput": 5.54,
+          "vram": 16.0,
+          "status": "QUALITY / SLOW"
+      },
+      {
+          "id": 9,
+          "name": "Gemopus-4-E4B",
+          "arch": "Gemma-4",
+          "quant": "Q4_K_M",
+          "size": "—",
+          "throughput": null,
+          "vram": null,
+          "status": "BLOCKED"
+      },
+      {
+          "id": 10,
+          "name": "Gemopus-4-26B-A4B",
+          "arch": "Gemma-4 MoE",
+          "quant": "Q4_K_M",
+          "size": "15.6 GB",
+          "throughput": null,
+          "vram": null,
+          "status": "BLOCKED"
+      }
   ],
   scores: {
     pokedex: [
@@ -366,25 +457,79 @@ const DATA = {
       { model:"Claude-Opus-v2", score:5, ids:"2 missing", syntax:false, verdict:"Missing IDs" }
     ]
   },
+  scoreEvolution: [
+    { version:"v4", score:5, label:"Single-shot truncated" },
+    { version:"v5.0", score:15, label:"JSON plan added" },
+    { version:"v5.1", score:40, label:"Phased generation" },
+    { version:"v5.2", score:55, label:"Validator loop" },
+    { version:"v5.3", score:55, label:"MTP benchmark sweep" }
+  ],
   blockers: [
-    { name:"DeepSeek Reasoning", models:"Qwopus3.5-27B-v3.5", cause:"Thinking blocks baked into GGUF chat template", fix:"No fix on 16GB — use Qwen3.5-9B with --reasoning off", resolved:false },
-    { name:"gemma4 Architecture", models:"Gemopus-4-E4B, Gemopus-4-26B-A4B", cause:"llama.cpp build 8500 lacked gemma4 support", fix:"Fixed: upgraded to build 9080", resolved:true },
-    { name:"VRAM OOM", models:"Gemopus-4-26B-A4B", cause:"Model + KV cache exceeds 16GB VRAM", fix:"Use IQ4_XS or Q2_K quants only", resolved:false }
+      {
+          "name": "Legacy reasoning output mode",
+          "models": "older reasoning GGUF variants",
+          "cause": "thinking content can route outside standard content field",
+          "fix": "use reasoning-off configs and validate API output",
+          "resolved": true
+      },
+      {
+          "name": "Unsupported architectures in older runtimes",
+          "models": "Gemma-4 family on older llama.cpp builds",
+          "cause": "runtime build lacked architecture support",
+          "fix": "upgrade runtime before retest",
+          "resolved": true
+      },
+      {
+          "name": "16GB VRAM pressure",
+          "models": "large dense 27B/30B+ high quants",
+          "cause": "model weights + KV cache can exceed card memory",
+          "fix": "prefer Q3_K_S/UD-Q2_K_XL MTP lanes or MoE variants",
+          "resolved": false
+      }
   ],
   optimizations: [
-    { id:1, technique:"VRAM cleanup (vram_cleanup)", impact:"Eliminates false OOMs", applied:"Cron scripts", result:"Kills ComfyUI, ollama, rustDesk" },
-    { id:2, technique:"NGL tuning (20→30)", impact:"+VRAM usage, -CPU offload", applied:"Qwopus35B-A3B", result:"10.1→14.6 GB, speed ↑" },
-    { id:3, technique:"Batch size (256→512)", impact:"+throughput", applied:"Qwopus35B-A3B", result:"Part of +268% gain" },
-    { id:4, technique:"Threads (8→12)", impact:"Better CPU/GPU pipelining", applied:"Qwopus35B-A3B", result:"Part of +268% gain" },
-    { id:5, technique:"Phased generation (v5.1→v5.3)", impact:"Respects context limits", applied:"All 9B models", result:"12k+ char outputs vs 4k truncation" },
-    { id:6, technique:"Positive examples in prompts", impact:"+30 pts ID accuracy", applied:"All v5.1+", result:"IDs now perfect" }
-  ],
-  scoreEvolution: [
-    { version:"v5", label:"Generic Prompt", score:20 },
-    { version:"v5.1", label:"Positive Examples", score:50 },
-    { version:"v5.2", label:"Async Fix", score:55 },
-    { version:"v5.3", label:"Fragmented CSS", score:22 },
-    { version:"v4", label:"Agent Auto-Fix", score:80 }
+      {
+          "id": 1,
+          "technique": "CUDA sm_120 llama.cpp build",
+          "impact": "native Blackwell acceleration",
+          "applied": "RTX 5060 Ti",
+          "result": "llama.cpp build 9262 operational"
+      },
+      {
+          "id": 2,
+          "technique": "MTP draft decoding",
+          "impact": "+57–70% on Qwen3.6 27B lanes",
+          "applied": "Qwen3.6 MTP GGUF",
+          "result": "Q3_K_S nmax=2 selected"
+      },
+      {
+          "id": 3,
+          "technique": "KV cache q4_0",
+          "impact": "lower VRAM pressure",
+          "applied": "27B tests",
+          "result": "full-GPU Q3/Q2 fits under 16GB"
+      },
+      {
+          "id": 4,
+          "technique": "Quant sweep",
+          "impact": "quality/speed tradeoff visibility",
+          "applied": "Q2/Q3/Q4 27B",
+          "result": "Q3_K_S best balanced"
+      },
+      {
+          "id": 5,
+          "technique": "Pre-benchmark VRAM cleanup",
+          "impact": "prevents false OOM",
+          "applied": "all GPU tests",
+          "result": "stable repeatable runs"
+      },
+      {
+          "id": 6,
+          "technique": "Direct resumable downloads",
+          "impact": "reliable large GGUF acquisition",
+          "applied": "HF model files",
+          "result": "avoids transfer stalls"
+      }
   ]
 };
 

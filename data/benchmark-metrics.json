@@ -1,14 +1,40 @@
 {
   "meta": {
-    "agency": "FreakingJSON Agency",
     "prepared_by": "N30",
-    "date": "2026-05-09",
+    "date": "2026-05-20",
     "hardware": "NVIDIA RTX 5060 Ti 16GB (Blackwell sm_120)",
-    "runtime": "llama.cpp build 9080",
-    "backend": "Vulkan",
-    "benchmark_window": "2026-04-24 \u2192 2026-05-08 (36 days)"
+    "runtime": "llama.cpp build 9262",
+    "backend": "CUDA sm_120 + MTP",
+    "benchmark_window": "2026-04-24 → 2026-05-20"
   },
   "models": [
+    {
+      "name": "Qwen3.5-2B Q4_K_M CUDA",
+      "arch": "Qwen3.5-2B",
+      "quant": "Q4_K_M",
+      "size_gb": 1.2,
+      "status": "FASTEST BASELINE",
+      "throughput_toks": 194.7,
+      "vram_gib": 1.2
+    },
+    {
+      "name": "Qwen3.6-27B-MTP Q3_K_S",
+      "arch": "Qwen3.6-27B",
+      "quant": "Q3_K_S + MTP nmax=2",
+      "size_gb": 11.71,
+      "status": "BEST 27B BALANCE",
+      "throughput_toks": 43.0,
+      "vram_gib": 13.99
+    },
+    {
+      "name": "Qwen3.6-27B-MTP UD-Q2_K_XL",
+      "arch": "Qwen3.6-27B",
+      "quant": "UD-Q2_K_XL + MTP nmax=3",
+      "size_gb": 11.21,
+      "status": "FASTEST 27B LOW-QUANT",
+      "throughput_toks": 45.27,
+      "vram_gib": 14.14
+    },
     {
       "name": "Qwopus3.5-9B Claude Opus Distill",
       "arch": "Qwen3.5-9B",
@@ -19,48 +45,12 @@
       "vram_gib": 7.142
     },
     {
-      "name": "Qwopus3.6-27B-v1-preview",
-      "arch": "Qwen3.6-27B MoE",
-      "quant": "Q2_K",
-      "size_gb": 10,
-      "status": "Viable",
-      "throughput_toks": null,
-      "vram_gib": null
-    },
-    {
-      "name": "Qwopus3.6-35B-A3B-v1",
-      "arch": "Qwen3.6-35B-A3B MoE",
-      "quant": "IQ4_XS",
-      "size_gb": 18,
-      "status": "Borderline",
-      "throughput_toks": 21.35,
-      "vram_gib": 14.6
-    },
-    {
-      "name": "Qwen3.5-9B DeepSeek-V4-Flash",
-      "arch": "Qwen3.5-9B",
-      "quant": "Q6_K",
-      "size_gb": 6.9,
-      "status": "Tested",
-      "throughput_toks": 55.3,
-      "vram_gib": 7.2
-    },
-    {
       "name": "Qwen3.5-9B DeepSeek-V4-Flash",
       "arch": "Qwen3.5-9B",
       "quant": "Q4_K_M",
       "size_gb": 5.4,
       "status": "Tested",
       "throughput_toks": 56.24,
-      "vram_gib": 7.142
-    },
-    {
-      "name": "Qwen3.5-9B Claude-Opus-v2",
-      "arch": "Qwen3.5-9B",
-      "quant": "Q4_K_M",
-      "size_gb": 5.3,
-      "status": "Tested",
-      "throughput_toks": 56.37,
       "vram_gib": 7.142
     },
     {
@@ -73,12 +63,31 @@
       "vram_gib": 7.142
     },
     {
+      "name": "Qwen3.6-35B-A3B-MTP",
+      "arch": "Qwen3.6-35B-A3B MoE",
+      "quant": "UD-IQ4_XS + MTP",
+      "size_gb": 17.0,
+      "status": "35B MOE DAILY DRIVER",
+      "throughput_toks": 22.2,
+      "vram_gib": 4.9
+    },
+    {
+      "name": "Qwen3.6-27B-MTP Q4_K_M",
+      "arch": "Qwen3.6-27B",
+      "quant": "Q4_K_M + MTP partial offload",
+      "size_gb": 16.0,
+      "status": "QUALITY / SLOW",
+      "throughput_toks": 5.54,
+      "vram_gib": 16.0
+    },
+    {
       "name": "Gemopus-4-E4B",
       "arch": "Gemma-4",
       "quant": "Q4_K_M",
       "size_gb": null,
       "status": "BLOCKED",
-      "blocker": "gemma4 arch unsupported"
+      "throughput_toks": null,
+      "vram_gib": null
     },
     {
       "name": "Gemopus-4-26B-A4B",
@@ -86,141 +95,68 @@
       "quant": "Q4_K_M",
       "size_gb": 15.6,
       "status": "BLOCKED",
-      "blocker": "VRAM > 16GB"
+      "throughput_toks": null,
+      "vram_gib": null
     }
   ],
-  "scores": {
-    "pokedex": {
-      "DSV4-Flash_9B": {
-        "ids": "12/12",
-        "syntax": true,
-        "bugs": 0,
-        "score": 55,
-        "verdict": "Best consistency"
-      },
-      "GLM5.1_9B": {
-        "ids": "12/12",
-        "syntax": true,
-        "bugs": 0,
-        "score": 50,
-        "verdict": "Good CSS/HTML"
-      },
-      "Claude-Opus-v2_9B": {
-        "ids": "1 wrong",
-        "syntax": false,
-        "bugs": 0,
-        "score": 10,
-        "verdict": "Verbose"
-      },
-      "Qwopus3.6-27B_Q2_K": {
-        "ids": "OK",
-        "syntax": true,
-        "bugs": 0,
-        "score": 55,
-        "verdict": "0 syntax errors v5.2"
-      },
-      "Qwopus3.5-9B_Claude": {
-        "ids": "13/13",
-        "syntax": false,
-        "bugs": null,
-        "score": 20,
-        "verdict": "Fragmented v5.3"
-      }
+  "mtp_results": {
+    "best_balanced_27b": {
+      "model": "Qwen3.6-27B-MTP Q3_K_S",
+      "baseline_toks": "26.1–26.4",
+      "mtp_toks": "41.4–43.0",
+      "acceptance": "80–85%",
+      "vram_gib": 13.99,
+      "config": "--spec-type draft-mtp --spec-draft-n-max 2"
     },
-    "starwars": {
-      "DSV4-Flash_9B": {
-        "ids": "12/12",
-        "syntax": false,
-        "bugs": 0,
-        "score": 15,
-        "verdict": "JS async bug"
-      },
-      "GLM5.1_9B": {
-        "ids": "12/12",
-        "syntax": false,
-        "bugs": 0,
-        "score": 15,
-        "verdict": "JS async bug"
-      },
-      "Claude-Opus-v2_9B": {
-        "ids": "2 missing",
-        "syntax": false,
-        "bugs": 0,
-        "score": 5,
-        "verdict": "Missing IDs"
-      },
-      "Qwopus3.6-27B_Q2_K": {
-        "ids": "OK",
-        "syntax": true,
-        "bugs": 0,
-        "score": 40,
-        "verdict": "Runtime logic bugs"
-      },
-      "Qwopus3.5-9B_Claude": {
-        "ids": "14/14",
-        "syntax": false,
-        "bugs": null,
-        "score": 25,
-        "verdict": "Fragmented v5.3"
-      }
+    "fastest_low_quant_27b": {
+      "model": "Qwen3.6-27B-MTP UD-Q2_K_XL",
+      "baseline_toks": "28.4–28.5",
+      "mtp_toks": "43.5–45.3",
+      "acceptance": "61–80%",
+      "vram_gib": "13.99–14.14",
+      "config": "--spec-type draft-mtp --spec-draft-n-max 3"
+    },
+    "quality_dense_27b": {
+      "model": "Qwen3.6-27B-MTP Q4_K_M",
+      "baseline_toks": "3.26–3.30",
+      "mtp_toks": "5.44–5.54",
+      "acceptance": "67–74%",
+      "note": "partial offload on 16GB"
+    },
+    "moe_35b": {
+      "model": "Qwen3.6-35B-A3B-MTP UD-IQ4_XS",
+      "baseline_toks": "15.0–21.0",
+      "mtp_toks": "19.9–22.2",
+      "vram_gib": "~4.2→4.9 active"
     }
   },
   "blockers": [
     {
-      "id": 1,
-      "name": "DeepSeek Reasoning",
-      "models": [
-        "Qwopus3.5-27B-v3.5"
-      ],
-      "cause": "Thinking blocks baked into GGUF",
-      "fix": "No fix on 16GB \u2014 use Qwen3.5-9B with --reasoning off"
+      "name": "Legacy reasoning output mode",
+      "models": "older reasoning GGUF variants",
+      "cause": "thinking content can route outside standard content field",
+      "fix": "use reasoning-off configs and validate API output",
+      "resolved": true
     },
     {
-      "id": 2,
-      "name": "gemma4 Architecture",
-      "models": [
-        "Gemopus-4-E4B",
-        "Gemopus-4-26B-A4B"
-      ],
-      "cause": "llama.cpp build 8500 lacked gemma4 support",
-      "fix": "Fixed: upgraded to build 9080"
+      "name": "Unsupported architectures in older runtimes",
+      "models": "Gemma-4 family on older llama.cpp builds",
+      "cause": "runtime build lacked architecture support",
+      "fix": "upgrade runtime before retest",
+      "resolved": true
     },
     {
-      "id": 3,
-      "name": "VRAM OOM",
-      "models": [
-        "Gemopus-4-26B-A4B"
-      ],
-      "cause": "Model + KV cache > 16GB",
-      "fix": "Use IQ4_XS or Q2_K only"
-    },
-    {
-      "id": 4,
-      "name": "NTFS Reparse Corruption",
-      "models": [
-        "6 of 7 original models"
-      ],
-      "cause": "HuggingFace cache symlinks broken",
-      "fix": "Fixed: fallback paths to /media"
-    },
-    {
-      "id": 5,
-      "name": "llama-server Slot Exhaustion",
-      "models": [
-        "All models"
-      ],
-      "cause": "Failed generations don't release slots",
-      "fix": "Fixed: kill/restart server between suites"
+      "name": "16GB VRAM pressure",
+      "models": "large dense 27B/30B+ high quants",
+      "cause": "model weights + KV cache can exceed card memory",
+      "fix": "prefer Q3_K_S/UD-Q2_K_XL MTP lanes or MoE variants",
+      "resolved": false
     }
   ],
   "hardware": {
     "gpu": "NVIDIA RTX 5060 Ti 16GB",
     "architecture": "Blackwell sm_120",
-    "vram_total_mib": 16311,
-    "vram_usable_gb": 15.3,
-    "system_ram_gb": 31,
-    "nvme_total_gb": 468,
-    "nvme_used_pct": 91,
-    "media_2tb_used_pct": 41
+    "vram_total_mib": 16384,
+    "system_ram_gb": 31
   }
 }

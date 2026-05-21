@@ -8,7 +8,7 @@
     "agency": "FreakingJSON Agency",
     "subtitle": "AI Operations Center",
     "report_title": "RTX 5060 Ti 16GB Benchmark Report",
-    "methodology": "Phased v5 Methodology"
+    "methodology": "Phased v5 + MTP sweep"
   },
   "hero": {
     "gpu_title": "Hardware Configuration",
@@ -16,8 +16,8 @@
     "architecture": "Blackwell sm_120",
     "vram": "16GB VRAM",
     "ram": "31GB System RAM",
-    "runtime": "llama.cpp build 9080",
-    "backend": "Vulkan Backend"
+    "runtime": "llama.cpp build 9262",
+    "backend": "CUDA sm_120 + MTP"
   },
   "nav": {
     "overview": "Overview",
@@ -66,8 +66,8 @@
   },
   "insights": {
     "title": "Key Insights",
-    "syntax_champion": "Qwopus3.6-27B achieved zero syntax errors — the only model to do so",
-    "css_quality": "35B-A3B shows exceptional CSS quality even when truncated",
+    "syntax_champion": "Qwen3.6-27B Q3_K_S + MTP nmax=2 is the best balanced 27B lane: 41–43 tok/s, 80–85% acceptance",
+    "css_quality": "Qwen3.6-35B-A3B UD-IQ4_XS remains viable as a lightweight MoE lane around 20–22 tok/s",
     "async_bug": "Async bug (1 character) affects all 9B models universally",
     "methodology_impact": "Prompt methodology accounts for ~35 points of difference"
   },
@@ -80,7 +80,7 @@
   "footer": {
     "agency": "FreakingJSON Agency",
     "ai_ops": "AI Operations Center",
-    "copyright": "Benchmark data from 36-day evaluation window"
+    "copyright": "Benchmark data from updated evaluation window through May 20, 2026"
   },
   "toggle": {
     "en": "English",

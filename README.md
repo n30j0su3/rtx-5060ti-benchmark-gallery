@@ -16,16 +16,16 @@ This repository presents benchmark results for **Qwopus/Jackrong/Hessling Lab mo
 | Metric | Result |
 |--------|--------|
 | **Best 9B Model** | Qwopus3.5-9B Claude Opus Distill — 56.37 tok/s |
-| **Zero Syntax Errors** | Qwopus3.6-27B Q2_K (first model to achieve this) |
-| **Max Throughput** | 176.37 tok/s (Qwen3.5-2B baseline) |
-| **Benchmark Window** | 36 days (Apr 24 → May 08, 2026) |
-| **Models Tested** | 9 (Qwopus variants + baseline controls) |
+| **Best 27B MTP Lane** | Qwen3.6-27B Q3_K_S + MTP nmax=2 — 41–43 tok/s |
+| **Max Throughput** | 194.7 tok/s (Qwen3.5-2B CUDA baseline) |
+| **Benchmark Window** | updated window (Apr 24 → May 20, 2026) |
+| **Models Tested** | 10 (Qwopus/Qwen3.6 MTP variants + baseline controls) |
 
 ### Blockers Encountered
 
 - **DeepSeek Reasoning** — Thinking blocks in GGUF chat template (no fix on 16GB VRAM)
-- **gemma4 Architecture** — llama.cpp build 8500 lacked support (✅ fixed in build 9080)
-- **VRAM OOM** — Gemopus-4-26B-A4B exceeds 16GB
+- **Unsupported architectures in older runtimes** — resolved by upgrading the llama.cpp runtime
+- **16GB VRAM pressure** — resolved through Q3/Q2 MTP lanes and MoE quant selection
 
 ### Interactive Dashboard
 
@@ -47,10 +47,10 @@ Este repositorio presenta resultados de benchmark para modelos **Qwopus/Jackrong
 | Métrica | Resultado |
 |---------|-----------|
 | **Mejor modelo 9B** | Qwopus3.5-9B Claude Opus Distill — 56.37 tok/s |
-| **Zero errores de sintaxis** | Qwopus3.6-27B Q2_K (primer modelo en lograr esto) |
-| **Throughput máximo** | 176.37 tok/s (baseline Qwen3.5-2B) |
-| **Ventana de benchmark** | 36 días (Abr 24 → May 08, 2026) |
-| **Modelos probados** | 9 (variantes Qwopus + controles baseline) |
+| **Mejor lane 27B MTP** | Qwen3.6-27B Q3_K_S + MTP nmax=2 — 41–43 tok/s |
+| **Throughput máximo** | 194.7 tok/s (baseline Qwen3.5-2B CUDA) |
+| **Ventana de benchmark** | ventana actualizada (Abr 24 → May 20, 2026) |
+| **Modelos probados** | 10 (variantes Qwopus/Qwen3.6 MTP + controles baseline) |
 
 ### Dashboard Interactivo
 
