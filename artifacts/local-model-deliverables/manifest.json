@@ -1,7 +1,7 @@
 {
   "schema": "fjson-local-model-deliverables/v1",
   "gallery": "rtx",
-  "note": "Artifacts copied verbatim from local benchmark outputs for GitHub Pages embedding. No generated mock data.",
+  "note": "Artifacts are embedded from local benchmark outputs for GitHub Pages inspection, with public-gallery runtime/identity repair where required. No generated mock data.",
   "artifacts": [
     {
       "file": "artifacts/local-model-deliverables/rtx-pokedex-qwopus36-v52.html",
