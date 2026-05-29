@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HOLOCRON - Benchmark v5.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* STAR WARS HOLOCRON STYLES */
+
+/* =========================================
+   RESET & BASE STYLES
+   ========================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --sw-accent: #FFD700;
+  --sw-text: #E6EDF3;
+  --sw-bg-dark: #0a0a2a;
+  --sw-bg-light: #0044FF;
+  --sw-border: rgba(255, 215, 0, 0.3);
+  --sw-bg-card: rgba(255, 215, 0, 0.05);
+  --sw-font-title: 'Orbitron', sans-serif;
+  --sw-font-body: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--sw-font-body);
+  color: var(--sw-text);
+  background: radial-gradient(var(--sw-bg-light), var(--sw-bg-dark));
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* =========================================
+   STARFIELD BACKGROUND
+   ========================================= */
+.sw-starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(var(--sw-bg-light), var(--sw-bg-dark));
+  overflow: hidden;
+}
+
+.sw-starfield::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(white 0.5px, transparent 0.5px),
+    radial-gradient(white 0.5px, transparent 0.5px);
+  background-size: 50px 50px, 100px 100px;
+  background-position: 0 0, 25px 25px;
+  animation: sw-starfield-drift 120s linear infinite;
+  opacity: 0.4;
+}
+
+@keyframes sw-starfield-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100vh); }
+}
+
+/* =========================================
+   LAYOUT & CONTAINER
+   ========================================= */
+.sw-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   HEADER & SEARCH
+   ========================================= */
+.sw-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.sw-title {
+  font-family: var(--sw-font-title);
+  font-size: 3rem;
+  color: var(--sw-accent);
+  text-shadow: 0 0 10px var(--sw-accent), 0 0 20px var(--sw-accent);
+  margin-bottom: 1rem;
+  letter-spacing: 0.2em;
+}
+
+.sw-search-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--sw-border);
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--sw-text);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sw-search-input:focus {
+  border-color: var(--sw-accent);
+  box-shadow: 0 0 15px var(--sw-accent);
+}
+
+/* =========================================
+   CATEGORY TABS
+   ========================================= */
+.sw-category-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.sw-tab {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--sw-border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--sw-text);
+  cursor: pointer;
+  font-family: var(--sw-font-body);
+  transition: all 0.3s ease;
+}
+
+.sw-tab:hover,
+.sw-tab.sw-active {
+  background: var(--sw-accent);
+  color: var(--sw-bg-dark);
+  box-shadow: 0 0 10px var(--sw-accent);
+}
+
+/* =========================================
+   RESULTS GRID
+   ========================================= */
+.sw-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.sw-card {
+  background: var(--sw-bg-card);
+  border: 1px solid var(--sw-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.sw-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px var(--sw-accent);
+}
+
+.sw-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.sw-card:hover::before {
+  transform: translateX(100%);
+}
+
+.sw-card-title {
+  font-family: var(--sw-font-title);
+  font-size: 1.4rem;
+  color: var(--sw-accent);
+  margin-bottom: 0.5rem;
+}
+
+.sw-card-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--sw-text);
+  opacity: 0.8;
+}
+
+/* =========================================
+   PAGINATION
+   ========================================= */
+.sw-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.sw-prev-btn,
+.sw-next-btn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--sw-border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--sw-text);
+  cursor: pointer;
+  font-family: var(--sw-font-body);
+  transition: all 0.3s ease;
+}
+
+.sw-prev-btn:hover,
+.sw-next-btn:hover {
+  background: var(--sw-accent);
+  color: var(--sw-bg-dark);
+  box-shadow: 0 0 10px var(--sw-accent);
+}
+
+.sw-page-info {
+  font-family: var(--sw-font-body);
+  color: var(--sw-text);
+  font-size: 1rem;
+}
+
+/* =========================================
+   MODAL
+   ========================================= */
+.sw-detail-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.sw-detail-modal.sw-modal-open {
+  display: flex;
+}
+
+.sw-modal-content {
+  background: radial-gradient(var(--sw-bg-light), var(--sw-bg-dark));
+  border: 2px solid var(--sw-border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0 30px var(--sw-accent);
+}
+
+.sw-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--sw-accent);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.sw-modal-close:hover {
+  transform: scale(1.1);
+}
+
+/* =========================================
+   LOADING & ERROR STATES
+   ========================================= */
+.sw-loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.sw-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--sw-border);
+  border-top: 5px solid var(--sw-accent);
+  border-radius: 50%;
+  animation: sw-spin 1s linear infinite;
+}
+
+@keyframes sw-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.sw-error-state {
+  text-align: center;
+  padding: 2rem;
+  color: #ff6b6b;
+  font-family: var(--sw-font-body);
+}
+
+/* =========================================
+   UTILITIES & ANIMATIONS
+   ========================================= */
+.sw-hidden {
+  display: none !important;
+}
+
+.sw-fade-in {
+  animation: sw-fade 0.5s ease-in-out;
+}
+
+@keyframes sw-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 768px) {
+  .sw-title {
+    font-size: 2rem;
+  }
+
+  .sw-results-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1
+</style>
+</head>
+<body>
+<div id="sw-starfield" aria-label="Background starfield"></div>
+
+<header>
+  <h1>STAR WARS HOLOCRON</h1>
+</header>
+
+<input type="text" id="sw-search-input" placeholder="Search the holocron..." aria-label="Search holocron entries" />
+
+<nav id="sw-category-tabs" aria-label="Category tabs">
+  <!-- Category tabs content -->
+</nav>
+
+<div id="sw-loading-state" class="sw-loading-state" hidden aria-live="polite"></div>
+
+<div id="sw-error-state" class="sw-error-state" hidden role="alert">
+  <p>An error occurred while accessing the holocron.</p>
+</div>
+
+<main id="sw-results-grid" role="grid" aria-label="Holocron results grid">
+  <!-- Grid items -->
+</main>
+
+<nav id="sw-pagination" aria-label="Pagination">
+  <button id="sw-prev-btn" type="button" aria-label="Previous page">Prev</button>
+  <span id="sw-page-info" aria-live="polite">Page 1</span>
+  <button id="sw-next-btn" type="button" aria-label="Next page">Next</button>
+</nav>
+
+<div id="sw-detail-modal" class="sw-modal" hidden role="dialog" aria-modal="true" aria-labelledby="sw-modal-title">
+  <button id="sw-modal-close" type="button" aria-label="Close modal">X</button>
+  <div id="sw-modal-content">
+    <!-- Modal content -->
+  </div>
+</div>
+
+<div id="sw-empty-state" class="sw-empty-state" hidden>
+  <p>No results found in the holocron.</p>
+</div>
+<script>
+(async function init() {
+    let searchInput = document.getElementById('sw-search-input');
+    let categoryTabs = document.getElementById('sw-category-tabs');
+    let resultsGrid = document.getElementById('sw-results-grid');
+    let prevBtn = document.getElementById('sw-prev-btn');
+    let nextBtn = document.getElementById('sw-next-btn');
+    let pageInfo = document.getElementById('sw-page-info');
+    let detailModal = document.getElementById('sw-detail-modal');
+    let modalClose = document.getElementById('sw-modal-close');
+    let modalContent = document.getElementById('sw-modal-content');
+    let loadingState = document.getElementById('sw-loading-state');
+    let errorState = document.getElementById('sw-error-state');
+    let starfield = document.getElementById('sw-starfield');
+
+    let currentCategory = 'people';
+    let currentData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let searchTimeout = null;
+
+    async function fetchCategory(cat) {
+        try {
+            let url = 'https://swapi.info/api/' + cat;
+            let r = await fetch(url);
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            let d = await r.json();
+            currentData = Array.isArray(d) ? d : (d.results || []);
+            filteredData = currentData.slice();
+            currentPage = 1;
+            renderPage();
+        } catch(e) {
+            showError(e.message);
+        }
+    }
+
+    function renderPage() {
+        let gridItems = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+        resultsGrid.innerHTML = '';
+        const loading = document.querySelector('.loading');
+        if (loading) loading.remove();
+        gridItems.forEach(function(item) {
+            let div = document.createElement('div');
+            div.className = 'holocron-card';
+            div.innerHTML = '<strong>' + (item.name || 'Unknown') + '</strong><br><span>' + (item.height || item.climate || item.model || 'N/A') + '</span>';
+            div.onclick = function() { showDetail(item); };
+            resultsGrid.appendChild(div);
+        });
+        let totalPages = Math.ceil(filteredData.length / itemsPerPage);
+        pageInfo.textContent = 'Page ' + currentPage + ' of ' + (totalPages || 1);
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    function showDetail(item) {
+        modalContent.innerHTML = '<h3>' + (item.name || 'Unknown') + '</h3><p>' + JSON.stringify(item, null, 2) + '</p>';
+        detailModal.style.display = 'block';
+    }
+
+    function closeDetail() {
+        detailModal.style.display = 'none';
+    }
+
+    function setupTabs() {
+        let tabs = categoryTabs.querySelectorAll('button');
+        tabs.forEach(function(tab) {
+            tab.onclick = function() {
+                tabs.forEach(function(t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                searchInput.value = '';
+                fetchCategory(currentCategory);
+            };
+        });
+    }
+
+    function setupSearch() {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() {
+                let term = searchInput.value.trim().toLowerCase();
+                if (term === '') {
+                    filteredData = currentData.slice();
+                } else {
+                    filteredData = currentData.filter(function(item) {
+                        let name = (item.name || '').toLowerCase();
+                        let desc = (item.height || item.climate || item.model || '').toLowerCase();
+                        return name.indexOf(term) > -1 || desc.indexOf(term) > -1;
+                    });
+                }
+                currentPage = 1;
+                renderPage();
+            }, 300);
+        });
+    }
+
+    function setupPagination() {
+        prevBtn.onclick = function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage();
+            }
+        };
+        nextBtn.onclick = function() {
+            let totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage();
+            }
+        };
+    }
+
+    function showError(msg) {
+        errorState.textContent = 'Error: ' + msg;
+        errorState.style.display = 'block';
+    }
+
+    setupTabs();
+    setupSearch();
+    setupPagination();
+    modalClose.onclick = closeDetail;
+    detailModal.onclick = function(e) {
+        if (e.target === detailModal) closeDetail();
+    };
+
+    fetchCategory('people');
+})().catch(function(err) { console.error('Init error:', err); });
+</script>
+</body>
+</html>
