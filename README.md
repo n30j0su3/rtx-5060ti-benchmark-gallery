@@ -48,3 +48,6 @@ That Space uses a 16-prompt suite (agentic, web-design, canvas/WebGL) for Qwopus
 - YouTube: <https://www.youtube.com/@freakingjson>
 
 © 2026 FreakingJSON Agencia.
+
+## Features
+- Live ES/EN language toggle, dark/light mode, and mobile-first responsive charts/tables.
