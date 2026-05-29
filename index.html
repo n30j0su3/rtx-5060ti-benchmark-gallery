@@ -3,738 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RTX 5060 Ti Benchmark Results — FreakingJSON Agencia</title>
+<title>RTX 5060 Ti Benchmark Gallery — FreakingJSON Agencia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background:#010403; color:#c8d0e0; font-family:'Space Grotesk','Segoe UI',system-ui,sans-serif; padding:20px; min-height:100vh; overflow-x:hidden; position:relative; }
+  #matrix-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:.06; }
+  .container { max-width:1480px; margin:0 auto; position:relative; z-index:1; }
+  .header { text-align:center; padding:24px 0 14px; }
+  .header h1 { font-family:'JetBrains Mono',monospace; font-size:2em; font-weight:700; letter-spacing:2px; text-shadow:0 0 30px rgba(6,182,212,.15); }
+  .header h1 .t { color:#06b6d4; } .header h1 .l { color:#40E0D0; } .header h1 .d { color:#64748b; }
+  .subtitle { font-family:'JetBrains Mono',monospace; font-size:.72em; color:#64748b; margin-top:6px; letter-spacing:4px; text-transform:uppercase; }
+  .subtitle span { color:#06b6d4; }
+  .header-divider { width:120px; height:1px; margin:12px auto; background:linear-gradient(90deg,transparent,rgba(6,182,212,.3),rgba(242,252,158,.3),transparent); }
+  .tier { position:relative; z-index:1; margin-bottom:14px; background:rgba(0,0,0,.55); border:1px solid rgba(6,182,212,.2); border-radius:18px; padding:16px 20px 14px; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); transition:border-color .3s ease; }
+  .tier:hover { border-color:rgba(6,182,212,.4); }
+  .tier-label { font-family:'JetBrains Mono',monospace; font-size:.62em; font-weight:700; letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(6,182,212,.15); display:flex; align-items:center; gap:8px; color:#06b6d4; }
+  .tier-label .count { margin-left:auto; font-weight:400; opacity:.45; font-size:.85em; }
+  .t0 { border-color:rgba(6,182,212,.35); background:rgba(0,0,0,.65); } .t2 { border-color:rgba(192,132,252,.3); } .t2 .tier-label { color:#c084fc; } .t3 { border-color:rgba(251,146,60,.3); } .t3 .tier-label { color:#fb923c; } .t4 { border-color:rgba(74,222,128,.3); } .t4 .tier-label { color:#4ade80; }
+  .metrics-row { display:flex; gap:12px; flex-wrap:wrap; }
+  .metric-box { flex:1; min-width:160px; background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:14px; text-align:center; }
+  .metric-box .val { font-family:'JetBrains Mono',monospace; font-size:1.55em; font-weight:700; } .metric-box .label { font-size:.58em; color:#64748b; text-transform:uppercase; letter-spacing:2px; margin-top:4px; }
+  .m-t { color:#06b6d4; } .m-l { color:#40E0D0; } .m-o { color:#fb923c; } .m-g { color:#4ade80; } .m-p { color:#c084fc; }
+  .data-table { width:100%; border-collapse:separate; border-spacing:0; margin:8px 0; }
+  .data-table th { font-family:'JetBrains Mono',monospace; font-size:.62em; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:#94a3b8; padding:8px 10px; text-align:left; border-bottom:1px solid rgba(6,182,212,.2); }
+  .data-table td { font-size:.7em; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.04); color:#8b95a5; vertical-align:top; }
+  .data-table tr:hover td { background:rgba(255,255,255,.02); } .data-table .num { font-family:'JetBrains Mono',monospace; text-align:right; color:#c8d0e0; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:.6em; font-weight:600; letter-spacing:1px; margin-right:4px; margin-top:4px; }
+  .badge-done { background:rgba(74,222,128,.15); color:#4ade80; } .badge-best { background:rgba(6,182,212,.15); color:#06b6d4; } .badge-warn { background:rgba(251,146,60,.15); color:#fb923c; } .badge-crit { background:rgba(239,68,68,.15); color:#ef4444; } .badge-info { background:rgba(192,132,252,.15); color:#c084fc; }
+  .chart-box { background:rgba(0,0,0,.45); border:1px solid rgba(6,182,212,.1); border-radius:12px; padding:16px; margin:10px 0; min-height:220px; }
+  .chart-title { font-family:'JetBrains Mono',monospace; font-size:.72em; font-weight:600; color:#e2e8f0; margin-bottom:10px; letter-spacing:2px; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid rgba(6,182,212,.15); }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; } @media(max-width:900px){ .two-col{grid-template-columns:1fr;} }
+  .footer { text-align:center; padding:20px 0 10px; color:#64748b; font-family:'JetBrains Mono',monospace; font-size:.6em; letter-spacing:2px; } .footer .mq { font-size:1.2em; color:rgba(6,182,212,.2); letter-spacing:6px; margin-bottom:4px; }
 
-  body {
-    background: #010403;
-    color: #c8d0e0;
-    font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
-    padding: 20px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
+  .note { font-size: 0.78em; color: #8b95a5; line-height: 1.55; }
+  .note b { color: #e2e8f0; }
+  .muted { color:#64748b; font-size:0.9em; }
+  a { color:#06b6d4; text-decoration:none; } a:hover { color:#f2fc9e; }
+  code { font-family:'JetBrains Mono', monospace; color:#e2e8f0; background:rgba(255,255,255,0.04); padding:2px 5px; border-radius:5px; }
+  .method-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+  @media(max-width:900px){ .method-grid { grid-template-columns:1fr; } }
+  .method-card { background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; }
+  .method-card strong { color:#06b6d4; font-family:'JetBrains Mono', monospace; font-size:.78em; letter-spacing:1px; text-transform:uppercase; }
+  .method-card p { margin-top:6px; font-size:.72em; color:#8b95a5; line-height:1.45; }
+  .link-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+  .link-pill { border:1px solid rgba(6,182,212,.22); background:rgba(6,182,212,.07); border-radius:999px; padding:7px 12px; font-size:.68em; font-family:'JetBrains Mono', monospace; }
+  .classification-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; }
+  @media(max-width:900px){ .classification-grid { grid-template-columns:1fr; } }
+  .mini-list { list-style:none; padding:0; margin:0; }
+  .mini-list li { padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.72em; color:#8b95a5; }
+  .mini-list li:last-child { border-bottom:0; }
 
-  #matrix-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0; pointer-events: none; opacity: 0.06;
-  }
-
-  .container { max-width: 1480px; margin: 0 auto; position: relative; z-index: 1; }
-
-  /* Header */
-  .header { text-align: center; padding: 24px 0 14px; }
-  .header h1 {
-    font-family: 'JetBrains Mono', monospace; font-size: 2em; font-weight: 700;
-    letter-spacing: 2px; text-shadow: 0 0 30px rgba(6,182,212,0.15);
-  }
-  .header h1 .t { color: #06b6d4; }
-  .header h1 .l { color: #40E0D0; }
-  .header h1 .d { color: #64748b; }
-  .subtitle {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.72em; color: #64748b;
-    margin-top: 6px; letter-spacing: 4px; text-transform: uppercase;
-  }
-  .subtitle span { color: #06b6d4; }
-  .header-divider {
-    width: 120px; height: 1px; margin: 12px auto;
-    background: linear-gradient(90deg, transparent, rgba(6,182,212,0.3), rgba(242,252,158,0.3), transparent);
-  }
-
-  /* N30 Hero */
-  .n30-hero {
-    background: rgba(0,0,0,0.6); border: 1px solid rgba(6,182,212,0.25);
-    border-radius: 18px; padding: 18px 24px; margin-bottom: 14px;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    text-align: center; position: relative;
-  }
-  .n30-hero .label {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; color: #64748b;
-    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px;
-  }
-  .n30-hero .name {
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.4em; font-weight: 700;
-    color: #06b6d4; letter-spacing: 2px;
-  }
-  .n30-hero .role { font-size: 0.7em; color: #8b95a5; margin-top: 2px; }
-
-  /* Tier cards */
-  .tier {
-    position: relative; z-index: 1; margin-bottom: 14px;
-    background: rgba(0,0,0,0.55); border: 1px solid rgba(6,182,212,0.2);
-    border-radius: 18px; padding: 16px 20px 14px;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    transition: border-color 0.3s ease;
-  }
-  .tier:hover { border-color: rgba(6,182,212,0.4); }
-
-  .tier-label {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; font-weight: 700;
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px;
-    padding-bottom: 8px; border-bottom: 1px solid rgba(6,182,212,0.15);
-    display: flex; align-items: center; gap: 8px; color: #06b6d4;
-  }
-  .tier-label .icon { font-size: 1.1em; }
-  .tier-label .count { margin-left: auto; font-weight: 400; opacity: 0.4; font-size: 0.85em; }
-
-  /* Tier colors */
-  .t0 { border-color: rgba(6,182,212,0.35); background: rgba(0,0,0,0.65); }
-  .t0:hover { border-color: rgba(6,182,212,0.55); }
-  .t0 .tier-label { color: #06b6d4; border-color: rgba(6,182,212,0.15); }
-
-  .t1 { border-color: rgba(6,182,212,0.3); }
-  .t1 .tier-label { color: #06b6d4; }
-
-  .t2 { border-color: rgba(192,132,252,0.3); }
-  .t2 .tier-label { color: #c084fc; }
-
-  .t3 { border-color: rgba(251,146,60,0.3); }
-  .t3 .tier-label { color: #fb923c; }
-
-  .t4 { border-color: rgba(74,222,128,0.3); }
-  .t4 .tier-label { color: #4ade80; }
-
-  /* KPI grid */
-  .metrics-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .metric-box {
-    flex: 1; min-width: 160px; background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
-    padding: 14px; text-align: center;
-  }
-  .metric-box .val { font-family: 'JetBrains Mono', monospace; font-size: 1.6em; font-weight: 700; }
-  .metric-box .label { font-size: 0.6em; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
-  .m-t { color: #06b6d4; }
-  .m-l { color: #40E0D0; }
-  .m-o { color: #fb923c; }
-  .m-g { color: #4ade80; }
-  .m-p { color: #c084fc; }
-
-  /* Tables */
-  .data-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0; }
-  .data-table th {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.62em; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 2px; color: #94a3b8;
-    padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(6,182,212,0.2);
-  }
-  .data-table td {
-    font-size: 0.7em; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.04);
-    color: #8b95a5; vertical-align: top;
-  }
-  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
-  .data-table .ok { color: #4ade80; }
-  .data-table .warn { color: #fb923c; }
-  .data-table .crit { color: #ef4444; }
-  .data-table .info { color: #06b6d4; }
-  .data-table .num { font-family: 'JetBrains Mono', monospace; text-align: right; color: #c8d0e0; }
-
-  /* Badges */
-  .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.6em;
-    font-weight: 600; letter-spacing: 1px; margin-right: 4px; margin-top: 4px;
-  }
-  .badge-done { background: rgba(74,222,128,0.15); color: #4ade80; }
-  .badge-best { background: rgba(6,182,212,0.15); color: #06b6d4; }
-  .badge-warn { background: rgba(251,146,60,0.15); color: #fb923c; }
-  .badge-crit { background: rgba(239,68,68,0.15); color: #ef4444; }
-  .badge-info { background: rgba(6,182,212,0.15); color: #06b6d4; }
-  .badge-purple { background: rgba(192,132,252,0.15); color: #c084fc; }
-
-  /* Charts */
-  .chart-box { background: rgba(0,0,0,0.45); border: 1px solid rgba(6,182,212,0.1); border-radius: 12px; padding: 16px; margin: 10px 0; }
-  .chart-title {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.72em; font-weight: 600;
-    color: #e2e8f0; margin-bottom: 10px; letter-spacing: 2px;
-    text-transform: uppercase; padding-bottom: 6px;
-    border-bottom: 1px solid rgba(6,182,212,0.15);
-  }
-
-  /* Blocker cards */
-  .blocker-card {
-    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
-    border-left: 3px solid #ef4444; transition: all 0.2s;
-  }
-  .blocker-card.resolved { border-left-color: #4ade80; }
-  .blocker-card:hover { border-color: rgba(255,255,255,0.12); background: rgba(0,0,0,0.6); }
-  .blocker-title { font-size: 0.85em; font-weight: 600; color: #e2e8f0; margin-bottom: 4px; }
-  .blocker-meta { font-size: 0.7em; color: #64748b; margin-bottom: 4px; }
-  .blocker-fix { font-size: 0.7em; color: #8b95a5; }
-  .blocker-fix .l { color: #4ade80; font-weight: 600; }
-
-  /* Two-col */
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-
-  /* Footer */
-  .footer {
-    text-align: center; padding: 20px 0 10px; color: #64748b;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.6em;
-    letter-spacing: 2px;
-  }
-  .footer .mq {
-    font-size: 1.2em; color: rgba(6,182,212,0.2);
-    letter-spacing: 6px; margin-bottom: 4px;
-  }
 </style>
 </head>
 <body>
 <canvas id="matrix-canvas"></canvas>
 <div class="container">
-
-<!-- HEADER -->
 <div class="header">
-  <h1><span class="t">RTX</span><span class="d">_</span><span class="l">5060Ti</span> <span class="d">::</span> <span class="t">BENCHMARK</span><span class="d">_</span><span class="l">RESULTS</span></h1>
-  <div class="subtitle">Qwopus / Qwen3.6 MTP / Jackrong · <span>Updated May 20</span></div>
+  <h1><span class="t">RTX</span><span class="d">_</span><span class="l">5060Ti</span> <span class="d">::</span> <span class="t">TRUST</span><span class="d">_</span><span class="l">GATES</span></h1>
+  <div class="subtitle">Vector RTX 5060 Ti CUDA · all-local trust gates · Jackrong comparison frame · <span>Updated May 29, 2026</span></div>
   <div class="header-divider"></div>
 </div>
 
-<!-- N30 HERO -->
 <div class="tier t0">
-  <div class="tier-label"><span class="icon">🧠</span> ORCHESTRATOR & LEAD ENGINEER <span class="count">CEO</span></div>
-  <div class="n30-hero" style="border:none;background:transparent;padding:0;">
-    <div class="label">All benchmark orchestration by</div>
-    <div class="name">N30</div>
-    <div class="role">CEO & Technical Director — FreakingJSON Agencia. Methodology design, AI model evaluations, and prompt engineering directed by N30.</div>
+  <div class="tier-label"><span class="icon">🧠</span> ORCHESTRATION CREDIT <span class="count">N30</span></div>
+  <div style="text-align:center;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.62em;color:#64748b;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;">All benchmark orchestration, methodology design, and AI model evaluations directed by</div>
+    <div style="font-size:1.4em;font-weight:700;color:#06b6d4;letter-spacing:2px;">N30</div>
+    <div class="note">All benchmark orchestration, methodology design, and AI model evaluations directed by N30. Public copy separates strict trust from recoverable/draft lanes.</div>
+    <div class="link-row"><a class="link-pill" href="https://huggingface.co/spaces/Jackrong/qwopus36-eval" target="_blank" rel="noopener">Jackrong qwopus36-eval reference</a><a class="link-pill" href="https://github.com/n30j0su3" target="_blank" rel="noopener">N30 GitHub</a></div>
   </div>
 </div>
 
-<!-- TIER 1: KPI OVERVIEW -->
 <div class="tier t1">
-  <div class="tier-label"><span class="icon">📊</span> KEY METRICS <span class="count">36-day window</span></div>
+  <div class="tier-label"><span class="icon">📊</span> FINAL TRUST-GATE METRICS <span class="count">Vector RTX 5060 Ti CUDA</span></div>
   <div class="metrics-row">
-    <div class="metric-box"><div class="val m-l">10</div><div class="label">Models Tested</div></div>
-    <div class="metric-box"><div class="val m-t">56.37</div><div class="label">Top 9B tok/s</div></div>
-    <div class="metric-box"><div class="val m-p">194.7</div><div class="label">Max tok/s (2B)</div></div>
-    <div class="metric-box"><div class="val m-g">55/100</div><div class="label">Top Pokedex Score</div></div>
-    <div class="metric-box"><div class="val m-o">43.0</div><div class="label">Best 27B MTP tok/s</div></div>
-    <div class="metric-box"><div class="val m-l">3</div><div class="label">Blockers Resolved</div></div>
-  </div>
+    <div class="metric-box"><div class="val m-l">8</div><div class="label">Models Evaluated</div></div>
+    <div class="metric-box"><div class="val m-t">1</div><div class="label">Strict E2E Champions</div></div>
+    <div class="metric-box"><div class="val m-g">2</div><div class="label">Gold-stage Strict Passers</div></div>
+    <div class="metric-box"><div class="val m-p">4/4</div><div class="label">Framework Passed All</div></div>
+    <div class="metric-box"><div class="val m-o">2/3</div><div class="label">Gold Passed All</div></div>
+    <div class="metric-box"><div class="val m-l">269.4</div><div class="label">Top measured tok/s</div></div>
+</div>
 </div>
 
-<!-- TIER 2: LEADERBOARD (codeneedle-style) -->
-<div class="tier t1">
-  <div class="tier-label"><span class="icon">🏆</span> MODEL LEADERBOARD — TOKEN THROUGHPUT <span class="count">tok/s</span></div>
-  <div id="leaderboard" class="chart-box"></div>
-</div>
-
-<!-- TIER 2b: SCORES -->
 <div class="tier t2">
-  <div class="tier-label"><span class="icon">📈</span> POKEDEX / STARWARS — RAW LLM SCORES <span class="count">Phased v5 · No agent fixes</span></div>
-  <div class="two-col">
-    <div id="pokedexChart" class="chart-box"></div>
-    <div id="starwarsChart" class="chart-box"></div>
-  </div>
-  <div class="chart-box" style="margin-top:10px;">
-    <div class="chart-title">Score Evolution by Methodology Version</div>
-    <div id="evolutionChart"></div>
+  <div class="tier-label"><span class="icon">🧪</span> N30 TRUST PIPELINE <span class="count">strict vs recovery</span></div>
+  <div class="method-grid">
+    <div class="method-card"><strong>Smoke gate</strong><p>Agentic/structured tasks. Pass all here before deeper evaluation. Attempt 1 is strict; attempts 2-3 only show recoverability.</p></div>
+    <div class="method-card"><strong>Framework gate</strong><p>Framework-spec tasks: executable contracts, BMAD/story breakdown, spec review, and execution planning.</p></div>
+    <div class="method-card"><strong>Gold gate</strong><p>High-signal creative UI/canvas reference tasks. Gold passers are scarce by design; no draft lane is overclaimed.</p></div>
   </div>
 </div>
 
-<!-- TIER 3: MODELS TABLE -->
 <div class="tier t1">
-  <div class="tier-label"><span class="icon">📋</span> MODELS TESTED — FULL COMPARISON <span class="count">10 models</span></div>
+  <div class="tier-label"><span class="icon">🏆</span> QUALITY LEADERBOARD <span class="count">8 models</span></div>
+  <div id="trustChart" class="chart-box"></div>
+</div>
+
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">📋</span> VECTOR RTX CUDA — FINAL ALL-LOCAL COMPARISON <span class="count">final run</span></div>
   <table class="data-table">
-    <thead><tr>
-      <th>#</th><th>Model</th><th>Architecture</th><th>Quant</th><th class="num">Size</th><th class="num">Tok/s</th><th class="num">VRAM</th><th>Status</th>
-    </tr></thead>
-    <tbody id="modelsBody"></tbody>
+    <thead><tr><th>#</th><th>Model</th><th>Class</th><th>Smoke</th><th>Framework</th><th>Gold</th><th class="num">tok/s</th><th>Status</th></tr></thead>
+    <tbody>
+<tr>
+  <td class="num">9</td>
+  <td><code>vector-qwen36-35b-a3b-q4xl</code></td>
+  <td><span class="badge badge-best">LOCAL_CHAMPION_STRICT_GOLD</span></td>
+  <td>3/3 <span class="muted">strict 3/3</span></td>
+  <td>4/4 <span class="muted">strict 4/4</span></td>
+  <td>2/2 <span class="muted">strict 2/2</span></td>
+  <td class="num">17.6</td>
+  <td>MODEL_DONE</td>
+</tr>
+
+<tr>
+  <td class="num">11</td>
+  <td><code>vector-qwen35-27b-glm-q4</code></td>
+  <td><span class="badge badge-warn">SMOKE_PROMOTED_NEEDS_FRAMEWORK</span></td>
+  <td>3/3 <span class="muted">strict 3/3</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">5.2</td>
+  <td>TIMEOUT</td>
+</tr>
+
+<tr>
+  <td class="num">17</td>
+  <td><code>vector-qwen35-9b-glm-q4</code></td>
+  <td><span class="badge badge-info">LOCAL_CHAMPION_RECOVERABLE_GOLD</span></td>
+  <td>3/3 <span class="muted">strict 2/3</span></td>
+  <td>4/4 <span class="muted">strict 3/4</span></td>
+  <td>2/2 <span class="muted">strict 2/2</span></td>
+  <td class="num">62.7</td>
+  <td>MODEL_DONE</td>
+</tr>
+
+<tr>
+  <td class="num">22</td>
+  <td><code>vector-qwopus35-27b-v3-q4</code></td>
+  <td><span class="badge badge-warn">FRAMEWORK_READY_NO_GOLD</span></td>
+  <td>3/3 <span class="muted">strict 2/3</span></td>
+  <td>4/4 <span class="muted">strict 4/4</span></td>
+  <td>—</td>
+  <td class="num">5.2</td>
+  <td>TIMEOUT</td>
+</tr>
+
+<tr>
+  <td class="num">23</td>
+  <td><code>vector-ollama-qwopus-9b-q6</code></td>
+  <td><span class="badge badge-warn">FRAMEWORK_READY_NO_GOLD</span></td>
+  <td>3/3 <span class="muted">strict 1/3</span></td>
+  <td>4/4 <span class="muted">strict 3/4</span></td>
+  <td>1/2 <span class="muted">strict 1/2</span></td>
+  <td class="num">49.3</td>
+  <td>MODEL_DONE</td>
+</tr>
+
+<tr>
+  <td class="num">24</td>
+  <td><code>vector-qwopus35-9b-v3-q4</code></td>
+  <td><span class="badge badge-crit">REPAIR_OR_DRAFT_ONLY</span></td>
+  <td>1/3 <span class="muted">strict 0/3</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">61.7</td>
+  <td>MODEL_DONE</td>
+</tr>
+
+<tr>
+  <td class="num">33</td>
+  <td><code>vector-ollama-qwen35-08b</code></td>
+  <td><span class="badge badge-crit">LOAD_FAIL_QUARANTINE</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">—</td>
+  <td>LOAD_FAIL</td>
+</tr>
+
+<tr>
+  <td class="num">34</td>
+  <td><code>vector-ollama-qwen3-06b</code></td>
+  <td><span class="badge badge-crit">QUARANTINE</span></td>
+  <td>0/3 <span class="muted">strict 0/3</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">269.4</td>
+  <td>MODEL_DONE</td>
+</tr></tbody>
   </table>
 </div>
 
-<!-- TIER 4: BLOCKERS -->
+
+<div class="tier t1">
+  <div class="tier-label"><span class="icon">🏎️</span> LEGACY THROUGHPUT BASELINE <span class="count">RTX CUDA · historical lane</span></div>
+  <div class="note">Original RTX gallery throughput evidence is preserved for continuity, then fused with the new trust-gate results. Throughput alone is not promoted to production trust; it is displayed beside strict/recoverable gate outcomes.</div>
+  <div id="legacyThroughput" class="chart-box"></div>
+</div>
+
+
 <div class="tier t3">
-  <div class="tier-label"><span class="icon">🚧</span> CRITICAL BLOCKERS & FAILURE MODES <span class="count">3 documented</span></div>
-  <div id="blockersContainer"></div>
-</div>
-
-<!-- TIER 4b: OPTIMIZATIONS -->
-<div class="tier t4">
-  <div class="tier-label"><span class="icon">⚡</span> VERIFIED OPTIMIZATIONS <span class="count">6 applied</span></div>
-  <table class="data-table">
-    <thead><tr><th>#</th><th>Technique</th><th>Impact</th><th>Applied To</th><th>Result</th></tr></thead>
-    <tbody id="optBody"></tbody>
-  </table>
-</div>
-
-<!-- TIER 5: HARDWARE -->
-<div class="tier t1">
-  <div class="tier-label"><span class="icon">🛠️</span> HARDWARE SPECIFICATIONS <span class="count">RTX 5060 Ti</span></div>
+  <div class="tier-label"><span class="icon">🧬</span> JACKRONG QWOPUS36-EVAL STYLE COMPARISON <span class="count">framing, not apples-to-apples</span></div>
   <div class="two-col">
     <div class="chart-box">
-      <div class="chart-title">GPU</div>
-      <div style="margin-bottom:12px;">
-        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Model</div>
-        <div style="font-size:1em;font-weight:600;color:#e2e8f0;">NVIDIA RTX <span style="color:#06b6d4;">5060 Ti</span> 16GB</div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Architecture</div>
-        <div style="font-size:0.85em;color:#06b6d4;">Blackwell sm_120</div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">VRAM / RAM</div>
-        <div style="font-size:0.85em;color:#8b95a5;">16,311 MiB VRAM · 31 GB System</div>
-      </div>
-      <div>
-        <div style="font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Runtime</div>
-        <div style="font-size:0.85em;color:#8b95a5;">llama.cpp build <span style="color:#06b6d4;">9262</span> · CUDA sm_120 + MTP</div>
-      </div>
+      <div class="chart-title">Public reference frame</div>
+      <p class="note"><b>Jackrong/Kyle Hessling Space:</b> Qwopus3.6-27B v1-preview Q4_K_M on RTX 5090, 16-prompt suite: 5 agentic, 5 web-design, 6 canvas/WebGL. Published copy reports 62.3 tok/s average, 87.4k generated tokens, 23.4 min runtime.</p>
+      <p class="note" style="margin-top:10px;">We reuse the comparison vocabulary — agentic reasoning, production UI, and canvas/WebGL — while showing N30's stricter local multi-pass trust gates.</p>
     </div>
-    <div id="vramChart" class="chart-box"></div>
+    <div class="chart-box">
+      <div class="chart-title">Local gate mapping</div>
+      <ul class="mini-list">
+        <li><b>Smoke</b> → agentic trust probes and structured output reliability.</li>
+        <li><b>Framework</b> → spec/framework planning and review tasks.</li>
+        <li><b>Gold</b> → creative UI/canvas-style gold references.</li>
+        <li><b>Policy</b> → attempt 1 strict; retries are recovery signal only.</li>
+      </ul>
+    </div>
   </div>
-  <div id="vramUsageChart" class="chart-box" style="margin-top:10px;"></div>
 </div>
 
-<!-- FOOTER -->
+<div class="tier t4">
+  <div class="tier-label"><span class="icon">🔗</span> PROVENANCE & OFFICIAL LINKS <span class="count">public evidence</span></div>
+  <div class="note"><b>Source run:</b> <code>all-local-model-eval-20260528-231052</code> · <b>Summary SHA256:</b> <code>4fd13586827e78a8…</code> · <b>State SHA256:</b> <code>f8baa63f755c2887…</code></div>
+  <div class="link-row"><a class="link-pill" href="https://github.com/n30j0su3" target="_blank" rel="noopener">N30 GitHub</a><a class="link-pill" href="https://linktr.ee/freakingjson" target="_blank" rel="noopener">FreakingJSON Linktree</a><a class="link-pill" href="https://x.com/freakingjson" target="_blank" rel="noopener">X / Twitter</a><a class="link-pill" href="https://www.youtube.com/@freakingjson" target="_blank" rel="noopener">YouTube</a><a class="link-pill" href="https://github.com/n30j0su3" target="_blank" rel="noopener">N30 GitHub</a></div>
+</div>
+
 <div class="footer">
   <div class="mq">⬡ · ⬡ · ⬡</div>
-  FreakingJSON Agencia · AI Operations Center · 2026
-  <div style="margin-top:4px;color:rgba(6,182,212,0.15);">Free your mind. — Morpheus</div>
+  © 2026 FreakingJSON Agencia · AI Operations Center · RTX 5060 Ti Benchmark Gallery
+  <div style="margin-top:4px;color:rgba(6,182,212,.25);">All benchmark orchestration, methodology design, and AI model evaluations directed by N30.</div>
 </div>
-
 </div>
-
-<!-- MATRIX RAIN -->
 <script>
-const canvas = document.getElementById('matrix-canvas');
-const ctx = canvas.getContext('2d');
-let width, height, drops, columns;
-const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789<>/[]{}';
-const charSize = 12;
-
-function initMatrix() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  columns = Math.floor(width / charSize);
-  drops = new Array(columns).fill(0);
-}
-initMatrix();
-window.addEventListener('resize', initMatrix);
-
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(1, 4, 3, 0.06)';
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = '#06b6d4';
-  ctx.font = `${charSize}px 'JetBrains Mono'`;
-  for (let i = 0; i < drops.length; i++) {
-    const char = chars[Math.floor(Math.random() * chars.length)];
-    const x = i * charSize;
-    const y = drops[i] * charSize;
-    ctx.globalAlpha = 0.1 + Math.random() * 0.2;
-    ctx.fillText(char, x, y);
-    if (y > height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix, 50);
+const canvas=document.getElementById('matrix-canvas'); const ctx=canvas.getContext('2d'); let width,height,drops,columns; const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789<>/[]{}'; const charSize=12;
+function initMatrix(){ width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; columns=Math.floor(width/charSize); drops=new Array(columns).fill(0); } initMatrix(); window.addEventListener('resize',initMatrix);
+function drawMatrix(){ ctx.fillStyle='rgba(1,4,3,.06)'; ctx.fillRect(0,0,width,height); ctx.fillStyle='#06b6d4'; ctx.font=`${charSize}px JetBrains Mono`; for(let i=0;i<drops.length;i++){ const char=chars[Math.floor(Math.random()*chars.length)]; const x=i*charSize; const y=drops[i]*charSize; ctx.globalAlpha=.1+Math.random()*.2; ctx.fillText(char,x,y); if(y>height && Math.random()>.975)drops[i]=0; drops[i]++; } } setInterval(drawMatrix,50);
 </script>
-
-<!-- DATA & CHARTS -->
 <script>
-// ===== BENCHMARK DATA =====
-const DATA = {
-  models: [
-      {
-          "id": 1,
-          "name": "Qwen3.5-2B Q4_K_M CUDA",
-          "arch": "Qwen3.5-2B",
-          "quant": "Q4_K_M",
-          "size": "1.2 GB",
-          "throughput": 194.7,
-          "vram": 1.2,
-          "status": "FASTEST BASELINE"
-      },
-      {
-          "id": 2,
-          "name": "Qwen3.6-27B-MTP Q3_K_S",
-          "arch": "Qwen3.6-27B",
-          "quant": "Q3_K_S + MTP nmax=2",
-          "size": "11.71 GB",
-          "throughput": 43.0,
-          "vram": 13.99,
-          "status": "BEST 27B BALANCE"
-      },
-      {
-          "id": 3,
-          "name": "Qwen3.6-27B-MTP UD-Q2_K_XL",
-          "arch": "Qwen3.6-27B",
-          "quant": "UD-Q2_K_XL + MTP nmax=3",
-          "size": "11.21 GB",
-          "throughput": 45.27,
-          "vram": 14.14,
-          "status": "FASTEST 27B LOW-QUANT"
-      },
-      {
-          "id": 4,
-          "name": "Qwopus3.5-9B Claude Opus Distill",
-          "arch": "Qwen3.5-9B",
-          "quant": "Q4_K_M",
-          "size": "5.3 GB",
-          "throughput": 56.37,
-          "vram": 7.142,
-          "status": "BEST 9B"
-      },
-      {
-          "id": 5,
-          "name": "Qwen3.5-9B DeepSeek-V4-Flash",
-          "arch": "Qwen3.5-9B",
-          "quant": "Q4_K_M",
-          "size": "5.4 GB",
-          "throughput": 56.24,
-          "vram": 7.142,
-          "status": "Tested"
-      },
-      {
-          "id": 6,
-          "name": "Qwen3.5-9B GLM5.1-Distill",
-          "arch": "Qwen3.5-9B",
-          "quant": "Q4_K_M",
-          "size": "5.3 GB",
-          "throughput": 56.35,
-          "vram": 7.142,
-          "status": "Tested"
-      },
-      {
-          "id": 7,
-          "name": "Qwen3.6-35B-A3B-MTP",
-          "arch": "Qwen3.6-35B-A3B MoE",
-          "quant": "UD-IQ4_XS + MTP",
-          "size": "17.0 GB",
-          "throughput": 22.2,
-          "vram": 4.9,
-          "status": "35B MOE DAILY DRIVER"
-      },
-      {
-          "id": 8,
-          "name": "Qwen3.6-27B-MTP Q4_K_M",
-          "arch": "Qwen3.6-27B",
-          "quant": "Q4_K_M + MTP partial offload",
-          "size": "16.0 GB",
-          "throughput": 5.54,
-          "vram": 16.0,
-          "status": "QUALITY / SLOW"
-      },
-      {
-          "id": 9,
-          "name": "Gemopus-4-E4B",
-          "arch": "Gemma-4",
-          "quant": "Q4_K_M",
-          "size": "—",
-          "throughput": null,
-          "vram": null,
-          "status": "BLOCKED"
-      },
-      {
-          "id": 10,
-          "name": "Gemopus-4-26B-A4B",
-          "arch": "Gemma-4 MoE",
-          "quant": "Q4_K_M",
-          "size": "15.6 GB",
-          "throughput": null,
-          "vram": null,
-          "status": "BLOCKED"
-      }
-  ],
-  scores: {
-    pokedex: [
-      { model:"DSV4-Flash 9B", score:55, ids:"12/12", syntax:true, verdict:"Best consistency" },
-      { model:"Qwopus3.6-27B Q2", score:55, ids:"OK", syntax:true, verdict:"0 syntax errors" },
-      { model:"GLM5.1 9B", score:50, ids:"12/12", syntax:true, verdict:"Good CSS/HTML" },
-      { model:"Qwopus3.5-9B", score:20, ids:"13/13", syntax:false, verdict:"Fragmented v5.3" },
-      { model:"Claude-Opus-v2", score:10, ids:"1 wrong", syntax:false, verdict:"Verbose" }
-    ],
-    starwars: [
-      { model:"Qwopus3.6-27B Q2", score:40, ids:"OK", syntax:true, verdict:"Runtime logic bugs" },
-      { model:"Qwopus3.5-9B", score:25, ids:"14/14", syntax:false, verdict:"Fragmented v5.3" },
-      { model:"DSV4-Flash 9B", score:15, ids:"12/12", syntax:false, verdict:"JS async bug" },
-      { model:"GLM5.1 9B", score:15, ids:"12/12", syntax:false, verdict:"JS async bug" },
-      { model:"Claude-Opus-v2", score:5, ids:"2 missing", syntax:false, verdict:"Missing IDs" }
-    ]
-  },
-  scoreEvolution: [
-    { version:"v4", score:5, label:"Single-shot truncated" },
-    { version:"v5.0", score:15, label:"JSON plan added" },
-    { version:"v5.1", score:40, label:"Phased generation" },
-    { version:"v5.2", score:55, label:"Validator loop" },
-    { version:"v5.3", score:55, label:"MTP benchmark sweep" }
-  ],
-  blockers: [
-      {
-          "name": "Legacy reasoning output mode",
-          "models": "older reasoning GGUF variants",
-          "cause": "thinking content can route outside standard content field",
-          "fix": "use reasoning-off configs and validate API output",
-          "resolved": true
-      },
-      {
-          "name": "Unsupported architectures in older runtimes",
-          "models": "Gemma-4 family on older llama.cpp builds",
-          "cause": "runtime build lacked architecture support",
-          "fix": "upgrade runtime before retest",
-          "resolved": true
-      },
-      {
-          "name": "16GB VRAM pressure",
-          "models": "large dense 27B/30B+ high quants",
-          "cause": "model weights + KV cache can exceed card memory",
-          "fix": "prefer Q3_K_S/UD-Q2_K_XL MTP lanes or MoE variants",
-          "resolved": false
-      }
-  ],
-  optimizations: [
-      {
-          "id": 1,
-          "technique": "CUDA sm_120 llama.cpp build",
-          "impact": "native Blackwell acceleration",
-          "applied": "RTX 5060 Ti",
-          "result": "llama.cpp build 9262 operational"
-      },
-      {
-          "id": 2,
-          "technique": "MTP draft decoding",
-          "impact": "+57–70% on Qwen3.6 27B lanes",
-          "applied": "Qwen3.6 MTP GGUF",
-          "result": "Q3_K_S nmax=2 selected"
-      },
-      {
-          "id": 3,
-          "technique": "KV cache q4_0",
-          "impact": "lower VRAM pressure",
-          "applied": "27B tests",
-          "result": "full-GPU Q3/Q2 fits under 16GB"
-      },
-      {
-          "id": 4,
-          "technique": "Quant sweep",
-          "impact": "quality/speed tradeoff visibility",
-          "applied": "Q2/Q3/Q4 27B",
-          "result": "Q3_K_S best balanced"
-      },
-      {
-          "id": 5,
-          "technique": "Pre-benchmark VRAM cleanup",
-          "impact": "prevents false OOM",
-          "applied": "all GPU tests",
-          "result": "stable repeatable runs"
-      },
-      {
-          "id": 6,
-          "technique": "Direct resumable downloads",
-          "impact": "reliable large GGUF acquisition",
-          "applied": "HF model files",
-          "result": "avoids transfer stalls"
-      }
-  ]
-};
-
-// ===== PLOTLY THEME =====
-const PLOTLY_THEME = {
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor: 'rgba(0,0,0,0)',
-  font: { family: 'JetBrains Mono, monospace', color: '#64748b', size: 11 },
-  xaxis: { gridcolor: 'rgba(6,182,212,0.08)', zerolinecolor: 'rgba(6,182,212,0.15)' },
-  yaxis: { gridcolor: 'rgba(6,182,212,0.08)', zerolinecolor: 'rgba(6,182,212,0.15)' },
-  margin: { l: 60, r: 20, t: 10, b: 60 }
-};
-const COLORS = ['#06b6d4', '#f2fc9e', '#c084fc', '#4ade80', '#fb923c', '#f87171', '#67e8f9', '#818cf8', '#94a3b8'];
-const QWOPUS_COLOR = '#c084fc';
-const DSV4_COLOR = '#06b6d4';
-const GLM_COLOR = '#40E0D0';
-const CLAUDE_COLOR = '#67e8f9';
-const BLOCKED_COLOR = '#64748b';
-
-function modelColor(name) {
-  if (name.includes('Qwopus3.5-9B')) return QWOPUS_COLOR;
-  if (name.includes('Qwopus3.6-27B')) return '#fb923c';
-  if (name.includes('Qwopus3.6-35B')) return '#f87171';
-  if (name.includes('DSV4')) return DSV4_COLOR;
-  if (name.includes('GLM')) return GLM_COLOR;
-  if (name.includes('Claude')) return CLAUDE_COLOR;
-  if (name.includes('Blocked')) return BLOCKED_COLOR;
-  return BLOCKED_COLOR;
-}
-
-// ===== 1. LEADERBOARD (codeneedle-style horizontal bars) =====
-const tpModels = DATA.models.filter(m => m.throughput).sort((a,b) => a.throughput - b.throughput);
-const leaderTrace = {
-  type: 'bar',
-  orientation: 'h',
-  x: tpModels.map(m => m.throughput),
-  y: tpModels.map(m => m.name.split(' ').slice(0,2).join(' ')),
-  marker: { color: tpModels.map(m => modelColor(m.name)), line: { width: 0 } },
-  text: tpModels.map(m => `${m.throughput.toFixed(2)} tok/s`),
-  textposition: 'outside',
-  textfont: { color: '#8b95a5', size: 10 },
-  hoverinfo: 'text',
-  hovertext: tpModels.map(m => `<b>${m.name}</b><br>Throughput: ${m.throughput.toFixed(2)} tok/s<br>VRAM: ${m.vram?.toFixed(2) || '—'} GiB<br>Quant: ${m.quant}<br>Status: ${m.status}`)
-};
-Plotly.newPlot('leaderboard', [leaderTrace], {
-  ...PLOTLY_THEME,
-  xaxis: { ...PLOTLY_THEME.xaxis, title: 'tok/s →', titlefont: { color: '#06b6d4' } },
-  height: 320
-}, { displayModeBar: false, responsive: true });
-
-// ===== 2. POKEDEX SCORES =====
-const pkModels = DATA.scores.pokedex;
-Plotly.newPlot('pokedexChart', [{
-  type: 'bar',
-  x: pkModels.map(s => s.score),
-  y: pkModels.map(s => s.model),
-  orientation: 'h',
-  marker: {
-    color: pkModels.map(s => s.score >= 50 ? '#4ade80' : s.score >= 20 ? '#fb923c' : '#ef4444'),
-    line: { width: 0 }
-  },
-  text: pkModels.map(s => `${s.score}/100 · ${s.verdict}`),
-  textposition: 'outside',
-  textfont: { color: '#8b95a5', size: 9 },
-  hoverinfo: 'text',
-  hovertext: pkModels.map(s => `<b>${s.model}</b><br>Score: ${s.score}/100<br>IDs: ${s.ids}<br>Syntax: ${s.syntax ? '✅' : '❌'}<br>${s.verdict}`)
-}], {
-  ...PLOTLY_THEME,
-  title: { text: 'POKEDEX HTML', font: { family: 'JetBrains Mono', size: 13, color: '#06b6d4' } },
-  xaxis: { ...PLOTLY_THEME.xaxis, range: [0, 65], dtick: 10 },
-  height: 260
-}, { displayModeBar: false, responsive: true });
-
-// ===== 3. STARWARS SCORES =====
-const swModels = DATA.scores.starwars;
-Plotly.newPlot('starwarsChart', [{
-  type: 'bar',
-  x: swModels.map(s => s.score),
-  y: swModels.map(s => s.model),
-  orientation: 'h',
-  marker: {
-    color: swModels.map(s => s.score >= 30 ? '#4ade80' : s.score >= 15 ? '#fb923c' : '#ef4444'),
-    line: { width: 0 }
-  },
-  text: swModels.map(s => `${s.score}/100 · ${s.verdict}`),
-  textposition: 'outside',
-  textfont: { color: '#8b95a5', size: 9 },
-  hoverinfo: 'text',
-  hovertext: swModels.map(s => `<b>${s.model}</b><br>Score: ${s.score}/100<br>IDs: ${s.ids}<br>Syntax: ${s.syntax ? '✅' : '❌'}<br>${s.verdict}`)
-}], {
-  ...PLOTLY_THEME,
-  title: { text: 'STARWARS HTML', font: { family: 'JetBrains Mono', size: 13, color: '#c084fc' } },
-  xaxis: { ...PLOTLY_THEME.xaxis, range: [0, 50], dtick: 10 },
-  height: 260
-}, { displayModeBar: false, responsive: true });
-
-// ===== 4. SCORE EVOLUTION LINE =====
-Plotly.newPlot('evolutionChart', [{
-  type: 'scatter',
-  x: DATA.scoreEvolution.map(e => e.version),
-  y: DATA.scoreEvolution.map(e => e.score),
-  mode: 'lines+markers',
-  line: { color: '#06b6d4', width: 2 },
-  marker: { size: 8, color: '#06b6d4', line: { color: '#010403', width: 2 } },
-  fill: 'tozeroy',
-  fillcolor: 'rgba(6,182,212,0.08)',
-  hoverinfo: 'text',
-  hovertext: DATA.scoreEvolution.map(e => `<b>${e.version}</b> — ${e.label}<br>Score: ${e.score}/100`)
-}], {
-  ...PLOTLY_THEME,
-  xaxis: { ...PLOTLY_THEME.xaxis, title: 'Methodology Version' },
-  yaxis: { ...PLOTLY_THEME.yaxis, title: 'Score / 100', range: [0, 90] },
-  height: 260
-}, { displayModeBar: false, responsive: true });
-
-// ===== 5. VRAM VS SPEED SCATTER =====
-const vramSpeedModels = DATA.models.filter(m => m.vram && m.throughput);
-Plotly.newPlot('vramChart', [{
-  type: 'scatter',
-  x: vramSpeedModels.map(m => m.vram),
-  y: vramSpeedModels.map(m => m.throughput),
-  mode: 'markers+text',
-  marker: {
-    size: 14,
-    color: vramSpeedModels.map(m => modelColor(m.name)),
-    line: { color: '#010403', width: 2 }
-  },
-  text: vramSpeedModels.map(m => m.name.split(' ')[0]),
-  textposition: 'top center',
-  textfont: { size: 8, color: '#8b95a5' },
-  hoverinfo: 'text',
-  hovertext: vramSpeedModels.map(m => `<b>${m.name}</b><br>VRAM: ${m.vram.toFixed(2)} GiB<br>Speed: ${m.throughput.toFixed(2)} tok/s`)
-}], {
-  ...PLOTLY_THEME,
-  title: { text: 'VRAM vs Token Throughput', font: { family: 'JetBrains Mono', size: 12, color: '#c084fc' } },
-  xaxis: { ...PLOTLY_THEME.xaxis, title: 'VRAM (GiB) →', titlefont: { color: '#06b6d4' } },
-  yaxis: { ...PLOTLY_THEME.yaxis, title: 'tok/s ↑', titlefont: { color: '#06b6d4' } },
-  height: 300
-}, { displayModeBar: false, responsive: true });
-
-// ===== 6. VRAM USAGE BARS =====
-const vramModels = DATA.models.filter(m => m.vram).sort((a,b) => a.vram - b.vram);
-Plotly.newPlot('vramUsageChart', [{
-  type: 'bar',
-  x: vramModels.map(m => m.vram),
-  y: vramModels.map(m => m.name.split(' ').slice(0,2).join(' ')),
-  orientation: 'h',
-  marker: {
-    color: vramModels.map(m => m.vram > 14 ? '#f87171' : m.vram > 10 ? '#fb923c' : '#4ade80'),
-    line: { width: 0 }
-  },
-  text: vramModels.map(m => `${m.vram.toFixed(2)} GiB`),
-  textposition: 'outside',
-  textfont: { color: '#8b95a5', size: 10 },
-  hoverinfo: 'text',
-  hovertext: vramModels.map(m => `<b>${m.name}</b><br>VRAM: ${m.vram.toFixed(2)} GiB<br>Quant: ${m.quant}`)
-}], {
-  ...PLOTLY_THEME,
-  title: { text: 'VRAM USAGE BY MODEL', font: { family: 'JetBrains Mono', size: 12, color: '#4ade80' } },
-  xaxis: { ...PLOTLY_THEME.xaxis, title: 'VRAM (GiB) →', titlefont: { color: '#06b6d4' } },
-  height: 280
-}, { displayModeBar: false, responsive: true });
-
-// ===== POPULATE TABLES =====
-function statusBadge(status) {
-  if (status === 'BEST 9B') return '<span class="badge badge-best">BEST 9B</span>';
-  if (status === 'Viable') return '<span class="badge badge-info">Viable</span>';
-  if (status === 'Borderline') return '<span class="badge badge-warn">Borderline</span>';
-  if (status === 'BLOCKED') return '<span class="badge badge-crit">BLOCKED</span>';
-  return '<span class="badge badge-purple">Tested</span>';
-}
-
-const modelsBody = document.getElementById('modelsBody');
-DATA.models.forEach(m => {
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${m.id}</td>
-    <td style="font-weight:600;color:#e2e8f0;">${m.name}</td>
-    <td>${m.arch}</td><td>${m.quant}</td>
-    <td class="num">${m.size}</td>
-    <td class="num ${m.throughput ? 'info' : ''}">${m.throughput ? m.throughput.toFixed(2) : '—'}</td>
-    <td class="num">${m.vram ? m.vram.toFixed(2) + ' GiB' : '—'}</td>
-    <td>${statusBadge(m.status)}</td>`;
-  modelsBody.appendChild(row);
-});
-
-const blockersContainer = document.getElementById('blockersContainer');
-DATA.blockers.forEach(b => {
-  const card = document.createElement('div');
-  card.className = `blocker-card ${b.resolved ? 'resolved' : ''}`;
-  card.innerHTML = `
-    <div class="blocker-title">${b.resolved ? '✅' : '❌'} ${b.name}</div>
-    <div class="blocker-meta">Models: ${b.models} · ${b.cause}</div>
-    <div class="blocker-fix"><span class="l">${b.resolved ? 'Fix:' : 'Workaround:'}</span> ${b.fix}</div>`;
-  blockersContainer.appendChild(card);
-});
-
-const optBody = document.getElementById('optBody');
-DATA.optimizations.forEach(o => {
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${o.id}</td><td style="font-weight:600;color:#e2e8f0;">${o.technique}</td>
-    <td>${o.impact}</td><td>${o.applied}</td><td class="info">${o.result}</td>`;
-  optBody.appendChild(row);
-});
+const DASH={"models": [{"rank": 9, "model_id": "vector-qwen36-35b-a3b-q4xl", "environment": "Vector RTX 5060 Ti CUDA", "status": "MODEL_DONE", "classification": "LOCAL_CHAMPION_STRICT_GOLD", "priority_bucket": "promote_candidate", "prior_decision": "PROMOTE_CANDIDATE", "stages": {"smoke": {"tasks_total": 3, "passed": 3, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 3, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 16.071, "min_tok_s": 14.738, "max_tok_s": 17.436, "avg_attempts_per_task": 1.0, "attempts_total": 3}, "framework": {"tasks_total": 4, "passed": 4, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 4, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 17.378, "min_tok_s": 17.043, "max_tok_s": 17.729, "avg_attempts_per_task": 1.0, "attempts_total": 4}, "gold": {"tasks_total": 2, "passed": 2, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 2, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 17.566, "min_tok_s": 17.263, "max_tok_s": 17.868, "avg_attempts_per_task": 1.0, "attempts_total": 2}}, "last_stage": "gold", "best_avg_tok_s": 17.566, "gold_stage_strict": true, "strict_end_to_end": true}, {"rank": 11, "model_id": "vector-qwen35-27b-glm-q4", "environment": "Vector RTX 5060 Ti CUDA", "status": "TIMEOUT", "classification": "SMOKE_PROMOTED_NEEDS_FRAMEWORK", "priority_bucket": "promote_candidate", "prior_decision": "PROMOTE_CANDIDATE", "stages": {"smoke": {"tasks_total": 3, "passed": 3, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 3, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 5.224, "min_tok_s": 5.222, "max_tok_s": 5.227, "avg_attempts_per_task": 1.0, "attempts_total": 3}, "framework": null, "gold": null}, "last_stage": "smoke", "best_avg_tok_s": 5.224, "gold_stage_strict": false, "strict_end_to_end": false}, {"rank": 17, "model_id": "vector-qwen35-9b-glm-q4", "environment": "Vector RTX 5060 Ti CUDA", "status": "MODEL_DONE", "classification": "LOCAL_CHAMPION_RECOVERABLE_GOLD", "priority_bucket": "repair_draft_candidate", "prior_decision": "DRAFT_ONLY_OR_REPAIR_REQUIRED", "stages": {"smoke": {"tasks_total": 3, "passed": 3, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 2, "strict_first_pass_rate": 0.6667, "strict_pct": 66.7, "recovered_by_retry": 1, "avg_tok_s": 62.649, "min_tok_s": 61.187, "max_tok_s": 63.47, "avg_attempts_per_task": 1.333, "attempts_total": 4}, "framework": {"tasks_total": 4, "passed": 4, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 3, "strict_first_pass_rate": 0.75, "strict_pct": 75.0, "recovered_by_retry": 1, "avg_tok_s": 62.743, "min_tok_s": 61.512, "max_tok_s": 63.211, "avg_attempts_per_task": 1.25, "attempts_total": 5}, "gold": {"tasks_total": 2, "passed": 2, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 2, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 62.73, "min_tok_s": 62.429, "max_tok_s": 63.03, "avg_attempts_per_task": 1.0, "attempts_total": 2}}, "last_stage": "gold", "best_avg_tok_s": 62.73, "gold_stage_strict": true, "strict_end_to_end": false}, {"rank": 22, "model_id": "vector-qwopus35-27b-v3-q4", "environment": "Vector RTX 5060 Ti CUDA", "status": "TIMEOUT", "classification": "FRAMEWORK_READY_NO_GOLD", "priority_bucket": "repair_draft_candidate", "prior_decision": "DRAFT_ONLY_OR_REPAIR_REQUIRED", "stages": {"smoke": {"tasks_total": 3, "passed": 3, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 2, "strict_first_pass_rate": 0.6667, "strict_pct": 66.7, "recovered_by_retry": 1, "avg_tok_s": 5.221, "min_tok_s": 5.201, "max_tok_s": 5.237, "avg_attempts_per_task": 1.667, "attempts_total": 5}, "framework": {"tasks_total": 4, "passed": 4, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 4, "strict_first_pass_rate": 1.0, "strict_pct": 100.0, "recovered_by_retry": 0, "avg_tok_s": 5.216, "min_tok_s": 5.209, "max_tok_s": 5.225, "avg_attempts_per_task": 1.0, "attempts_total": 4}, "gold": null}, "last_stage": "framework", "best_avg_tok_s": 5.216, "gold_stage_strict": false, "strict_end_to_end": false}, {"rank": 23, "model_id": "vector-ollama-qwopus-9b-q6", "environment": "Vector RTX 5060 Ti CUDA", "status": "MODEL_DONE", "classification": "FRAMEWORK_READY_NO_GOLD", "priority_bucket": "untested_variant", "prior_decision": "UNTESTED_VARIANT", "stages": {"smoke": {"tasks_total": 3, "passed": 3, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 1, "strict_first_pass_rate": 0.3333, "strict_pct": 33.3, "recovered_by_retry": 2, "avg_tok_s": 49.931, "min_tok_s": 49.626, "max_tok_s": 50.288, "avg_attempts_per_task": 1.667, "attempts_total": 5}, "framework": {"tasks_total": 4, "passed": 4, "failed": 0, "pass_rate": 1.0, "pass_pct": 100.0, "strict_first_pass": 3, "strict_first_pass_rate": 0.75, "strict_pct": 75.0, "recovered_by_retry": 1, "avg_tok_s": 49.963, "min_tok_s": 49.648, "max_tok_s": 50.167, "avg_attempts_per_task": 1.25, "attempts_total": 5}, "gold": {"tasks_total": 2, "passed": 1, "failed": 1, "pass_rate": 0.5, "pass_pct": 50.0, "strict_first_pass": 1, "strict_first_pass_rate": 0.5, "strict_pct": 50.0, "recovered_by_retry": 0, "avg_tok_s": 49.339, "min_tok_s": 48.615, "max_tok_s": 50.063, "avg_attempts_per_task": 2.0, "attempts_total": 4}}, "last_stage": "gold", "best_avg_tok_s": 49.339, "gold_stage_strict": false, "strict_end_to_end": false}, {"rank": 24, "model_id": "vector-qwopus35-9b-v3-q4", "environment": "Vector RTX 5060 Ti CUDA", "status": "MODEL_DONE", "classification": "REPAIR_OR_DRAFT_ONLY", "priority_bucket": "untested_variant", "prior_decision": "REJECT_FOR_TRUST_GATE", "stages": {"smoke": {"tasks_total": 3, "passed": 1, "failed": 2, "pass_rate": 0.3333, "pass_pct": 33.3, "strict_first_pass": 0, "strict_first_pass_rate": 0.0, "strict_pct": 0.0, "recovered_by_retry": 1, "avg_tok_s": 61.692, "min_tok_s": 60.419, "max_tok_s": 62.819, "avg_attempts_per_task": 2.667, "attempts_total": 8}, "framework": null, "gold": null}, "last_stage": "smoke", "best_avg_tok_s": 61.692, "gold_stage_strict": false, "strict_end_to_end": false}, {"rank": 33, "model_id": "vector-ollama-qwen35-08b", "environment": "Vector RTX 5060 Ti CUDA", "status": "LOAD_FAIL", "classification": "LOAD_FAIL_QUARANTINE", "priority_bucket": "tiny_baseline", "prior_decision": "UNTESTED_VARIANT", "stages": {"smoke": null, "framework": null, "gold": null}, "last_stage": null, "best_avg_tok_s": null, "gold_stage_strict": false, "strict_end_to_end": false}, {"rank": 34, "model_id": "vector-ollama-qwen3-06b", "environment": "Vector RTX 5060 Ti CUDA", "status": "MODEL_DONE", "classification": "QUARANTINE", "priority_bucket": "tiny_baseline", "prior_decision": "UNTESTED_VARIANT", "stages": {"smoke": {"tasks_total": 3, "passed": 0, "failed": 3, "pass_rate": 0.0, "pass_pct": 0.0, "strict_first_pass": 0, "strict_first_pass_rate": 0.0, "strict_pct": 0.0, "recovered_by_retry": 0, "avg_tok_s": 269.407, "min_tok_s": 250.714, "max_tok_s": 283.334, "avg_attempts_per_task": 3.0, "attempts_total": 9}, "framework": null, "gold": null}, "last_stage": "smoke", "best_avg_tok_s": 269.407, "gold_stage_strict": false, "strict_end_to_end": false}], "aggregate": {"environment": "Vector RTX 5060 Ti CUDA", "models_total": 8, "classification_counts": {"LOCAL_CHAMPION_STRICT_GOLD": 1, "SMOKE_PROMOTED_NEEDS_FRAMEWORK": 1, "LOCAL_CHAMPION_RECOVERABLE_GOLD": 1, "FRAMEWORK_READY_NO_GOLD": 2, "REPAIR_OR_DRAFT_ONLY": 1, "LOAD_FAIL_QUARANTINE": 1, "QUARANTINE": 1}, "status_counts": {"MODEL_DONE": 5, "TIMEOUT": 2, "LOAD_FAIL": 1}, "strict_end_to_end_champions": ["vector-qwen36-35b-a3b-q4xl"], "gold_stage_strict_passers": ["vector-qwen36-35b-a3b-q4xl", "vector-qwen35-9b-glm-q4"], "stage_totals": {"smoke": {"models": 7, "passed_all": 5, "strict_all": 2, "avg_tok_s": 67.171}, "framework": {"models": 4, "passed_all": 4, "strict_all": 2, "avg_tok_s": 33.825}, "gold": {"models": 3, "passed_all": 2, "strict_all": 2, "avg_tok_s": 43.212}}}, "stage_totals": {"smoke": {"models": 32, "passed_all": 24, "strict_all": 11}, "framework": {"models": 23, "passed_all": 17, "strict_all": 10}, "gold": {"models": 16, "passed_all": 3, "strict_all": 3}}, "legacyModels": [{"name": "Qwen3.5-2B Q4_K_M CUDA", "arch": "Qwen3.5-2B", "quant": "Q4_K_M", "size_gb": 1.2, "status": "FASTEST BASELINE", "throughput_toks": 194.7, "vram_gib": 1.2}, {"name": "Qwen3.6-27B-MTP Q3_K_S", "arch": "Qwen3.6-27B", "quant": "Q3_K_S + MTP nmax=2", "size_gb": 11.71, "status": "BEST 27B BALANCE", "throughput_toks": 43.0, "vram_gib": 13.99}, {"name": "Qwen3.6-27B-MTP UD-Q2_K_XL", "arch": "Qwen3.6-27B", "quant": "UD-Q2_K_XL + MTP nmax=3", "size_gb": 11.21, "status": "FASTEST 27B LOW-QUANT", "throughput_toks": 45.27, "vram_gib": 14.14}, {"name": "Qwopus3.5-9B Claude Opus Distill", "arch": "Qwen3.5-9B", "quant": "Q4_K_M", "size_gb": 5.3, "status": "BEST 9B", "throughput_toks": 56.37, "vram_gib": 7.142}, {"name": "Qwen3.5-9B DeepSeek-V4-Flash", "arch": "Qwen3.5-9B", "quant": "Q4_K_M", "size_gb": 5.4, "status": "Tested", "throughput_toks": 56.24, "vram_gib": 7.142}, {"name": "Qwen3.5-9B GLM5.1-Distill", "arch": "Qwen3.5-9B", "quant": "Q4_K_M", "size_gb": 5.3, "status": "Tested", "throughput_toks": 56.35, "vram_gib": 7.142}, {"name": "Qwen3.6-35B-A3B-MTP", "arch": "Qwen3.6-35B-A3B MoE", "quant": "UD-IQ4_XS + MTP", "size_gb": 17.0, "status": "35B MOE DAILY DRIVER", "throughput_toks": 22.2, "vram_gib": 4.9}, {"name": "Qwen3.6-27B-MTP Q4_K_M", "arch": "Qwen3.6-27B", "quant": "Q4_K_M + MTP partial offload", "size_gb": 16.0, "status": "QUALITY / SLOW", "throughput_toks": 5.54, "vram_gib": 16.0}, {"name": "Gemopus-4-E4B", "arch": "Gemma-4", "quant": "Q4_K_M", "size_gb": null, "status": "BLOCKED", "throughput_toks": null, "vram_gib": null}, {"name": "Gemopus-4-26B-A4B", "arch": "Gemma-4 MoE", "quant": "Q4_K_M", "size_gb": 15.6, "status": "BLOCKED", "throughput_toks": null, "vram_gib": null}], "jackrong": {"space": "https://huggingface.co/spaces/Jackrong/qwopus36-eval", "framing": "Jackrong/Kyle Hessling public qwopus36-eval style uses agentic reasoning, web-design, and canvas/WebGL prompts. This gallery maps that public comparison vocabulary to N30's strict local trust gates; it is not a hardware apples-to-apples claim.", "public_reference_metrics_seen": {"model": "Jackrong/Qwopus3.6-27B-v1-preview-GGUF Q4_K_M", "hardware": "single RTX 5090 via llama.cpp", "suite": "5 agentic + 5 web-design + 6 canvas/WebGL prompts", "headline": "62.3 tok/s avg, 87.4k generated tokens, 23.4 min runtime (from the public Space copy)"}, "local_mapping": {"smoke": "agentic trust probes and structured reasoning checks", "framework": "framework-spec execution/review tasks", "gold": "creative UI/canvas-style gold reference tasks"}}};
+const THEME={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:'JetBrains Mono, monospace',color:'#64748b',size:11},xaxis:{gridcolor:'rgba(6,182,212,.08)',zerolinecolor:'rgba(6,182,212,.15)'},yaxis:{gridcolor:'rgba(6,182,212,.08)',zerolinecolor:'rgba(6,182,212,.15)'},margin:{l:220,r:170,t:20,b:70}};
+function clsScore(c){ return c==='LOCAL_CHAMPION_STRICT_GOLD'?100:c==='LOCAL_CHAMPION_RECOVERABLE_GOLD'?88:c==='FRAMEWORK_READY_NO_GOLD'?72:c==='SMOKE_PROMOTED_NEEDS_FRAMEWORK'?58:c==='REPAIR_OR_DRAFT_ONLY'?36:c==='TIMEOUT'?25:12; }
+function color(c){ return c==='LOCAL_CHAMPION_STRICT_GOLD'?'#06b6d4':c==='LOCAL_CHAMPION_RECOVERABLE_GOLD'?'#c084fc':c==='FRAMEWORK_READY_NO_GOLD'?'#4ade80':c==='SMOKE_PROMOTED_NEEDS_FRAMEWORK'?'#fb923c':c.includes('QUARANTINE')?'#ef4444':'#64748b'; }
+function renderFallback(id, text){ const el=document.getElementById(id); if(el) el.innerHTML='<div class="note">'+text+'</div>'; }
+if(window.Plotly){
+  const top=[...DASH.models].sort((a,b)=>clsScore(a.classification)-clsScore(b.classification) || (b.best_avg_tok_s||0)-(a.best_avg_tok_s||0));
+  Plotly.newPlot('trustChart',[{type:'bar',orientation:'h',x:top.map(m=>clsScore(m.classification)),y:top.map(m=>m.model_id.replace(/^vector-|^miniv-/,'').slice(0,42)),marker:{color:top.map(m=>color(m.classification))},text:top.map(m=>m.classification==='LOCAL_CHAMPION_STRICT_GOLD'?'STRICT GOLD':m.classification==='LOCAL_CHAMPION_RECOVERABLE_GOLD'?'RECOVERABLE':m.classification==='FRAMEWORK_READY_NO_GOLD'?'FRAMEWORK':m.classification==='SMOKE_PROMOTED_NEEDS_FRAMEWORK'?'SMOKE':m.classification.includes('LOAD_FAIL')?'LOAD FAIL':m.classification.includes('QUARANTINE')?'QUARANTINE':'DRAFT'),textposition:'inside',insidetextanchor:'end',textfont:{color:'#010403',size:9},hovertext:top.map(m=>`<b>${m.model_id}</b><br>${m.environment}<br>${m.classification}<br>Best measured tok/s: ${m.best_avg_tok_s??'—'}`),hoverinfo:'text'}],{...THEME,xaxis:{...THEME.xaxis,title:'Trust lane score (classification-derived)' },height:Math.max(330, DASH.models.length*28)} ,{displayModeBar:false,responsive:true});
+  if(DASH.legacyModels && DASH.legacyModels.length){
+    const lm=DASH.legacyModels.filter(m=>m.throughput_toks).sort((a,b)=>a.throughput_toks-b.throughput_toks);
+    Plotly.newPlot('legacyThroughput',[{type:'bar',orientation:'h',x:lm.map(m=>m.throughput_toks),y:lm.map(m=>m.name.split(' ').slice(0,3).join(' ')),marker:{color:'#06b6d4'},text:lm.map(m=>`${m.throughput_toks} tok/s`),textposition:'outside',hovertext:lm.map(m=>`<b>${m.name}</b><br>${m.quant}<br>VRAM: ${m.vram_gib??'—'} GiB`),hoverinfo:'text'}],{...THEME,xaxis:{...THEME.xaxis,title:'tok/s'},height:330},{displayModeBar:false,responsive:true});
+  }
+} else { renderFallback('trustChart','Plotly CDN unavailable; table data below is the canonical source.'); renderFallback('legacyThroughput','Plotly CDN unavailable; throughput data preserved in JSON files.'); }
 </script>
 </body>
 </html>
